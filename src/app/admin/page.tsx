@@ -5,6 +5,7 @@ import styles from "./admin.module.css";
 import * as XLSX from "xlsx";
 import { GroupPieChart, PassFailPieChart, ScoreDistributionChart, AvgByGroupChart, TimelineChart } from "./charts";
 import QuestionEditor from "./question-editor";
+import { ChartPie, ClipboardText, Gavel, NotePencil, DownloadSimple, X, CheckCircle, XCircle, ChartBar, Trophy, PencilSimple } from "@phosphor-icons/react";
 
 const ADMIN_PIN = "WFL2026";
 
@@ -228,16 +229,16 @@ export default function AdminPage() {
                     <span>W-Future Leader</span>
                 </div>
                 <div className={styles.adminNavRight}>
-                    <button className={styles.exportBtn} onClick={exportToExcel}>📥 Tải Excel</button>
+                    <button className={styles.exportBtn} onClick={exportToExcel}><DownloadSimple size={18} weight="bold" /> Tải Excel</button>
                     <button onClick={() => { setAuthed(false); setPin(""); }}>Đăng xuất</button>
                 </div>
             </div>
 
             <div className={styles.tabs}>
-                <button className={`${styles.tab} ${activeTab === "dashboard" ? styles.tabActive : ""}`} onClick={() => setActiveTab("dashboard")}>📊 Tổng quan</button>
-                <button className={`${styles.tab} ${activeTab === "submissions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("submissions")}>📋 Bài nộp</button>
-                <button className={`${styles.tab} ${activeTab === "judges" ? styles.tabActive : ""}`} onClick={() => setActiveTab("judges")}>👨‍⚖️ Giám khảo</button>
-                <button className={`${styles.tab} ${activeTab === "questions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("questions")}>📝 Bộ đề</button>
+                <button className={`${styles.tab} ${activeTab === "dashboard" ? styles.tabActive : ""}`} onClick={() => setActiveTab("dashboard")}><ChartPie size={18} /> Tổng quan</button>
+                <button className={`${styles.tab} ${activeTab === "submissions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("submissions")}><ClipboardText size={18} /> Bài nộp</button>
+                <button className={`${styles.tab} ${activeTab === "judges" ? styles.tabActive : ""}`} onClick={() => setActiveTab("judges")}><Gavel size={18} /> Giám khảo</button>
+                <button className={`${styles.tab} ${activeTab === "questions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("questions")}><NotePencil size={18} /> Bộ đề</button>
             </div>
 
             <div className={styles.content}>
@@ -274,13 +275,13 @@ export default function AdminPage() {
                                 {/* Charts Row 1: Pie charts */}
                                 <div className={styles.chartsRow}>
                                     <div className={styles.chartCard}>
-                                        <h3>📊 Phân bổ theo nhóm thi</h3>
+                                        <h3><ChartPie size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Phân bổ theo nhóm thi</h3>
                                         <div className={styles.chartWrap}>
                                             <GroupPieChart data={pieData} />
                                         </div>
                                     </div>
                                     <div className={styles.chartCard}>
-                                        <h3>✅ Tỷ lệ Đạt / Chưa đạt</h3>
+                                        <h3><CheckCircle size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Tỷ lệ Đạt / Chưa đạt</h3>
                                         <div className={styles.chartWrap}>
                                             <PassFailPieChart data={passFailData} />
                                         </div>
@@ -290,13 +291,13 @@ export default function AdminPage() {
                                 {/* Charts Row 2: Bar charts */}
                                 <div className={styles.chartsRow}>
                                     <div className={styles.chartCard}>
-                                        <h3>📈 Phân bổ điểm số</h3>
+                                        <h3><ChartBar size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Phân bổ điểm số</h3>
                                         <div className={styles.chartWrap}>
                                             <ScoreDistributionChart data={scoreBuckets} />
                                         </div>
                                     </div>
                                     <div className={styles.chartCard}>
-                                        <h3>🏆 Điểm trung bình theo nhóm</h3>
+                                        <h3><Trophy size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Điểm trung bình theo nhóm</h3>
                                         <div className={styles.chartWrap}>
                                             <AvgByGroupChart data={avgByGroup} />
                                         </div>
@@ -348,7 +349,7 @@ export default function AdminPage() {
                                             <option value="sc-planning">SC Planning</option>
                                             <option value="sc-logistics">SC Logistics</option>
                                         </select>
-                                        <button className={styles.exportBtnSm} onClick={exportToExcel}>📥 Excel</button>
+                                        <button className={styles.exportBtnSm} onClick={exportToExcel}><DownloadSimple size={16} /> Excel</button>
                                     </div>
                                 </div>
                                 <table className={styles.dataTable}>
@@ -392,7 +393,7 @@ export default function AdminPage() {
                                                 <h4>{j.name} <span className={`${styles.judgeRole} ${j.role === "admin" ? styles.roleAdmin : styles.roleJudge}`}>{j.role === "admin" ? "Admin" : "Giám khảo"}</span></h4>
                                                 <p>{j.email}</p>
                                             </div>
-                                            <button className={styles.deleteJudge} onClick={() => handleDeleteJudge(j.id)} title="Xóa">✕</button>
+                                            <button className={styles.deleteJudge} onClick={() => handleDeleteJudge(j.id)} title="Xóa"><X size={16} /></button>
                                         </div>
                                     ))}
                                 </div>
@@ -411,7 +412,7 @@ export default function AdminPage() {
                     <div className={styles.detailPanel} onClick={e => e.stopPropagation()}>
                         <div className={styles.detailHeader}>
                             <h2>Chi tiết bài nộp</h2>
-                            <button className={styles.closeBtn} onClick={() => setSelectedSub(null)}>✕</button>
+                            <button className={styles.closeBtn} onClick={() => setSelectedSub(null)}><X size={20} /></button>
                         </div>
                         <div className={styles.detailBody}>
                             <div className={styles.candidateInfo}>
@@ -424,13 +425,13 @@ export default function AdminPage() {
                             </div>
 
                             <div className={styles.answersSection}>
-                                <h3>📝 Câu trả lời ({(selectedSub.answers || []).length} câu)</h3>
+                                <h3><PencilSimple size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />Câu trả lời ({(selectedSub.answers || []).length} câu)</h3>
                                 {(selectedSub.answers || []).map((a, idx) => (
                                     <div key={idx} className={styles.answerItem}>
                                         <div className={styles.answerQuestion}>Câu {idx + 1}: {a.question || `Câu hỏi #${idx + 1}`}</div>
                                         {a.answer_text && <div className={styles.answerTextBox}><strong>Trả lời:</strong> {a.answer_text}</div>}
                                         <div className={a.correct ? styles.answerCorrect : styles.answerWrong}>
-                                            {a.correct ? "✅" : "❌"} {a.points ?? 0}/{a.max_points || "?"} điểm
+                                            {a.correct ? <CheckCircle size={16} color="#16a34a" weight="fill" /> : <XCircle size={16} color="#ef4444" weight="fill" />} {a.points ?? 0}/{a.max_points || "?"} điểm
                                         </div>
                                     </div>
                                 ))}

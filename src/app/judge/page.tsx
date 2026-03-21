@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import styles from "./judge.module.css";
+import { ClipboardText, NotePencil, X, ChatText, Star, FloppyDisk, CheckCircle, Warning } from "@phosphor-icons/react";
 
 /* ====== Types ====== */
 interface AnswerDetail {
@@ -160,7 +161,7 @@ export default function JudgePage() {
             .eq("result_id", selectedSub.id);
         if (data) setSubScores(data as JudgeScore[]);
         setSaving(false);
-        setSaveMsg("✅ Đã lưu điểm thành công!");
+        setSaveMsg("Đã lưu điểm thành công!");
         setTimeout(() => setSaveMsg(""), 3000);
     };
 
@@ -278,7 +279,7 @@ export default function JudgePage() {
                                 <div className={styles.subCardTime}>
                                     {new Date(s.submitted_at).toLocaleString("vi-VN")}
                                 </div>
-                                <button className={styles.gradeBtn}>📝 Chấm điểm</button>
+                                <button className={styles.gradeBtn}><NotePencil size={16} /> Chấm điểm</button>
                             </div>
                         ))}
                     </div>
@@ -290,8 +291,8 @@ export default function JudgePage() {
                 <div className={styles.overlay} onClick={() => setSelectedSub(null)}>
                     <div className={styles.panel} onClick={e => e.stopPropagation()}>
                         <div className={styles.panelHeader}>
-                            <h2>📋 Chấm điểm — {selectedSub.candidate_name}</h2>
-                            <button className={styles.closeBtn} onClick={() => setSelectedSub(null)}>✕</button>
+                            <h2><ClipboardText size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} />Chấm điểm — {selectedSub.candidate_name}</h2>
+                            <button className={styles.closeBtn} onClick={() => setSelectedSub(null)}><X size={20} /></button>
                         </div>
 
                         <div className={styles.panelBody}>
@@ -304,7 +305,7 @@ export default function JudgePage() {
                             </div>
 
                             {/* Questions + Answers + Per-Q grading */}
-                            <h3 className={styles.sectionTitle}>📝 Đọc câu trả lời và chấm điểm từng câu</h3>
+                            <h3 className={styles.sectionTitle}><NotePencil size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Đọc câu trả lời và chấm điểm từng câu</h3>
                             <div className={styles.answersList}>
                                 {(selectedSub.answers || []).map((a, idx) => (
                                     <div key={idx} className={styles.answerItem}>
@@ -317,7 +318,7 @@ export default function JudgePage() {
 
                                         {/* Candidate's actual answer */}
                                         <div className={styles.candidateAnswer}>
-                                            <label>💬 Câu trả lời của ứng viên:</label>
+                                            <label><ChatText size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} />Câu trả lời của ứng viên:</label>
                                             <div className={styles.answerBox}>
                                                 {a.answer_text || "(Chưa trả lời)"}
                                             </div>
@@ -342,14 +343,14 @@ export default function JudgePage() {
                             {/* If old format answers (no answer_text), show fallback */}
                             {selectedSub.answers?.length > 0 && !selectedSub.answers[0]?.question && (
                                 <div className={styles.oldFormatNotice}>
-                                    ⚠️ Bài này được nộp trước bản cập nhật — chưa lưu nội dung câu trả lời. Các bài nộp mới sẽ hiển thị đầy đủ.
+                                    <Warning size={18} style={{ verticalAlign: 'middle', marginRight: 4 }} />Bài này được nộp trước bản cập nhật — chưa lưu nội dung câu trả lời. Các bài nộp mới sẽ hiển thị đầy đủ.
                                 </div>
                             )}
 
                             {/* Summary + Notes + Save */}
                             <div className={styles.scoreSection}>
                                 <div className={styles.scoreSummary}>
-                                    <h3>⭐ Tổng điểm của bạn: <strong>{totalJudgeScore}</strong> / {totalMaxPoints}</h3>
+                                    <h3><Star size={20} weight="fill" color="#f59e0b" style={{ verticalAlign: 'middle', marginRight: 6 }} />Tổng điểm của bạn: <strong>{totalJudgeScore}</strong> / {totalMaxPoints}</h3>
                                 </div>
                                 <div className={styles.scoreField} style={{ marginTop: "0.75rem" }}>
                                     <label>Nhận xét chung</label>
@@ -357,7 +358,7 @@ export default function JudgePage() {
                                 </div>
                                 <div className={styles.scoreActions}>
                                     <button className={styles.saveBtn} onClick={handleScore} disabled={saving}>
-                                        {saving ? "Đang lưu..." : "💾 Lưu tất cả điểm"}
+                                        {saving ? "Đang lưu..." : <><FloppyDisk size={18} style={{ verticalAlign: 'middle', marginRight: 4 }} />Lưu tất cả điểm</>}
                                     </button>
                                     {saveMsg && <span className={styles.saveMsg}>{saveMsg}</span>}
                                 </div>

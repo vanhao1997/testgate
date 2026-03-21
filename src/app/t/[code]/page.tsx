@@ -5,6 +5,7 @@ import Link from "next/link";
 import { supabase, sendToGoogleSheet } from "../../lib/supabase";
 import { ThemeToggle } from "../../components/ThemeToggle";
 import styles from "../test.module.css";
+import { NotePencil, Timer } from "@phosphor-icons/react";
 
 type AnswerMap = Record<string, string | string[]>;
 
@@ -295,8 +296,8 @@ export default function CandidateTestPage() {
                                 <h3>{g.title}</h3>
                                 <p>{g.description}</p>
                                 <div className={styles["group-card-meta"]}>
-                                    <span>📝 {g.questions.length} câu</span>
-                                    <span>⏱ {g.durationMinutes} phút</span>
+                                    <span><NotePencil size={16} style={{ verticalAlign: 'middle', marginRight: 2 }} />{g.questions.length} câu</span>
+                                    <span><Timer size={16} style={{ verticalAlign: 'middle', marginRight: 2 }} />{g.durationMinutes} phút</span>
                                 </div>
                             </div>
                         ))}
@@ -327,7 +328,7 @@ export default function CandidateTestPage() {
                     <div className={styles["timer-container"]}>
                         <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)" }}>Bộ: {selectedGroup?.title}</span>
                         <div className={`${styles["timer-box"]} ${timerState === "warning" ? styles["timer-box-warning"] : timerState === "danger" ? styles["timer-box-danger"] : ""}`}>
-                            <span className={styles["timer-icon"]}>⏱</span>{formatTime(timeLeft)}
+                            <span className={styles["timer-icon"]}><Timer size={18} /></span>{formatTime(timeLeft)}
                         </div>
                     </div>
                 </div>

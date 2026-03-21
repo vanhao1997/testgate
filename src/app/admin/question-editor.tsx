@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import styles from "./qeditor.module.css";
+import { NotePencil, PencilSimple, Trash, X, Plus } from "@phosphor-icons/react";
 
 interface TestGroup {
     id: string; title: string; description: string; icon: string;
@@ -106,8 +107,8 @@ export default function QuestionEditor() {
         <div>
             {/* Header */}
             <div className={styles.qeHeader}>
-                <h3>📝 Quản lý bộ đề thi ({groups.length} bộ)</h3>
-                <button className={styles.qeAddBtn} onClick={() => setShowNewGroup(true)}>+ Thêm bộ đề</button>
+                <h3><NotePencil size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Quản lý bộ đề thi ({groups.length} bộ)</h3>
+                <button className={styles.qeAddBtn} onClick={() => setShowNewGroup(true)}><Plus size={16} weight="bold" /> Thêm bộ đề</button>
             </div>
 
             {/* New Group Form */}
@@ -154,8 +155,8 @@ export default function QuestionEditor() {
                                         {!g.is_active && <span className={styles.qeBadgeInactive}>Ẩn</span>}
                                     </div>
                                     <div className={styles.qeGroupActions}>
-                                        <button onClick={() => setEditGroup({ ...g })} title="Sửa">✏️</button>
-                                        <button onClick={() => deleteGroup(g.id)} title="Xóa">🗑️</button>
+                                        <button onClick={() => setEditGroup({ ...g })} title="Sửa"><PencilSimple size={18} /></button>
+                                        <button onClick={() => deleteGroup(g.id)} title="Xóa"><Trash size={18} /></button>
                                     </div>
                                 </>
                             )}
@@ -179,8 +180,8 @@ export default function QuestionEditor() {
                                             </div>
                                             <span className={styles.qeQPoints}>{q.points}đ</span>
                                             <div className={styles.qeQActions}>
-                                                <button onClick={() => setEditQ({ ...q })} title="Sửa">✏️</button>
-                                                <button onClick={() => deleteQuestion(q.id)} title="Xóa">✕</button>
+                                                <button onClick={() => setEditQ({ ...q })} title="Sửa"><PencilSimple size={16} /></button>
+                                                <button onClick={() => deleteQuestion(q.id)} title="Xóa"><X size={16} /></button>
                                             </div>
                                         </div>
                                     )}
@@ -198,7 +199,7 @@ export default function QuestionEditor() {
                             </div>
                         )}
                         <button className={styles.qeAddQBtn} onClick={() => { setShowNewQ(true); setNewQ({ type: "single_choice", content: "", points: 10, correct_answer: "", options: [], sort_order: gqs.length + 1 }); }}>
-                            + Thêm câu hỏi
+                            <Plus size={14} weight="bold" /> Thêm câu hỏi
                         </button>
                     </div>
                 );
@@ -275,10 +276,10 @@ function QuestionForm({ q, setQ, saving, onSave, onCancel, addOption, removeOpti
                                         setQ({ ...q, options: newOpts });
                                     }
                                 }} />
-                            <button className={styles.qeOptDelete} onClick={() => setQ({ ...q, options: removeOption(opts, i) })}>✕</button>
+                            <button className={styles.qeOptDelete} onClick={() => setQ({ ...q, options: removeOption(opts, i) })}><X size={16} /></button>
                         </div>
                     ))}
-                    <button className={styles.qeAddOptBtn} onClick={() => setQ({ ...q, options: addOption(opts) })}>+ Thêm đáp án</button>
+                    <button className={styles.qeAddOptBtn} onClick={() => setQ({ ...q, options: addOption(opts) })}><Plus size={14} /> Thêm đáp án</button>
                 </div>
             )}
 
