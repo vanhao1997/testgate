@@ -129,6 +129,49 @@ const TEST_GROUPS: TestGroup[] = [
                 id: "fin-10", type: "short_answer", content: "Giải thích ngắn gọn sự khác biệt giữa OPEX (Operating Expenditure) và CAPEX (Capital Expenditure).", points: 15,
                 correct_answer: "OPEX là chi phí vận hành hàng ngày, CAPEX là chi phí đầu tư tài sản dài hạn",
             },
+            // --- Mindset & Kiến thức chung ---
+            {
+                id: "ms-f1", type: "single_choice", content: "Khi gặp một vấn đề phức tạp trong công việc, bạn nên ưu tiên làm gì đầu tiên?", points: 10,
+                correct_answer: "Phân tích nguyên nhân gốc rễ trước khi đưa ra giải pháp",
+                options: [
+                    { id: "mf-1", content: "Báo cáo ngay cho cấp trên và chờ chỉ đạo", is_correct: false },
+                    { id: "mf-2", content: "Phân tích nguyên nhân gốc rễ trước khi đưa ra giải pháp", is_correct: true },
+                    { id: "mf-3", content: "Áp dụng cách giải quyết từ kinh nghiệm cũ ngay lập tức", is_correct: false },
+                    { id: "mf-4", content: "Bỏ qua và tập trung vào công việc khác", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-f2", type: "single_choice", content: "PDCA trong cải tiến liên tục là viết tắt của gì?", points: 10,
+                correct_answer: "Plan - Do - Check - Act",
+                options: [
+                    { id: "mf-5", content: "Plan - Do - Check - Act", is_correct: true },
+                    { id: "mf-6", content: "Process - Design - Control - Analyze", is_correct: false },
+                    { id: "mf-7", content: "Prepare - Deliver - Confirm - Adjust", is_correct: false },
+                    { id: "mf-8", content: "Plan - Develop - Complete - Assess", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-f3", type: "single_choice", content: "Tư duy 'Growth Mindset' khác với 'Fixed Mindset' ở điểm nào?", points: 10,
+                correct_answer: "Tin rằng năng lực có thể phát triển qua nỗ lực và học hỏi",
+                options: [
+                    { id: "mf-9", content: "Tin rằng năng lực có thể phát triển qua nỗ lực và học hỏi", is_correct: true },
+                    { id: "mf-10", content: "Luôn tập trung vào kết quả cuối cùng", is_correct: false },
+                    { id: "mf-11", content: "Tránh nhận thêm trách nhiệm mới", is_correct: false },
+                    { id: "mf-12", content: "Chỉ làm những việc mình giỏi sẵn", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-f4", type: "true_false", content: "Trong môi trường sản xuất, Kaizen có nghĩa là cải tiến liên tục từng bước nhỏ.", points: 5,
+                correct_answer: "true",
+                options: [
+                    { id: "mf-13", content: "Đúng", is_correct: true },
+                    { id: "mf-14", content: "Sai", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-f5", type: "short_answer", content: "Theo bạn, đâu là phẩm chất quan trọng nhất của một nhà quản lý sản xuất tương lai? Giải thích ngắn gọn.", points: 15,
+                correct_answer: "khả năng lãnh đạo, trách nhiệm, học hỏi, giải quyết vấn đề",
+            },
         ],
     },
     {
@@ -229,6 +272,49 @@ const TEST_GROUPS: TestGroup[] = [
                 id: "scp-10", type: "short_answer", content: "Giải thích ngắn gọn Bullwhip Effect (Hiệu ứng roi da) trong chuỗi cung ứng.", points: 15,
                 correct_answer: "Hiện tượng biến động đơn hàng tăng dần khi đi ngược chuỗi cung ứng từ khách hàng đến nhà cung cấp",
             },
+            // --- Mindset & Kiến thức chung ---
+            {
+                id: "ms-s1", type: "single_choice", content: "Khi làm việc nhóm, điều quan trọng nhất để đạt hiệu quả là gì?", points: 10,
+                correct_answer: "Giao tiếp rõ ràng và phân công trách nhiệm cụ thể",
+                options: [
+                    { id: "ms-1", content: "Mỗi người tự làm phần việc của mình", is_correct: false },
+                    { id: "ms-2", content: "Giao tiếp rõ ràng và phân công trách nhiệm cụ thể", is_correct: true },
+                    { id: "ms-3", content: "Luôn đồng ý với ý kiến số đông", is_correct: false },
+                    { id: "ms-4", content: "Tập trung hoàn thành nhanh nhất có thể", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-s2", type: "single_choice", content: "5S trong quản lý sản xuất bao gồm những gì?", points: 10,
+                correct_answer: "Sàng lọc, Sắp xếp, Sạch sẽ, Săn sóc, Sẵn sàng",
+                options: [
+                    { id: "ms-5", content: "Sàng lọc, Sắp xếp, Sạch sẽ, Săn sóc, Sẵn sàng", is_correct: true },
+                    { id: "ms-6", content: "Speed, Safety, Service, Skill, Standard", is_correct: false },
+                    { id: "ms-7", content: "Sáng tạo, Siêng năng, Sẵn sàng, Số liệu, Sức khỏe", is_correct: false },
+                    { id: "ms-8", content: "Sort, Set, Shine, Standardize, Sustain (nhưng không phiên bản trên)", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-s3", type: "single_choice", content: "KPI là viết tắt của gì?", points: 10,
+                correct_answer: "Key Performance Indicator",
+                options: [
+                    { id: "ms-9", content: "Key Performance Indicator", is_correct: true },
+                    { id: "ms-10", content: "Knowledge Process Integration", is_correct: false },
+                    { id: "ms-11", content: "Key Product Index", is_correct: false },
+                    { id: "ms-12", content: "Knowledgeable Professional Input", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-s4", type: "true_false", content: "Lean Manufacturing tập trung vào việc loại bỏ lãng phí (waste) trong quy trình sản xuất.", points: 5,
+                correct_answer: "true",
+                options: [
+                    { id: "ms-13", content: "Đúng", is_correct: true },
+                    { id: "ms-14", content: "Sai", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-s5", type: "short_answer", content: "Bạn xử lý thế nào khi nhận được phản hồi tiêu cực từ cấp trên về công việc của mình?", points: 15,
+                correct_answer: "lắng nghe, rút kinh nghiệm, cải thiện, không phòng thủ",
+            },
         ],
     },
     {
@@ -328,6 +414,49 @@ const TEST_GROUPS: TestGroup[] = [
             {
                 id: "scl-10", type: "short_answer", content: "Giải thích ngắn gọn sự khác biệt giữa Reverse Logistics và Forward Logistics.", points: 15,
                 correct_answer: "Forward Logistics là dòng hàng từ nhà sản xuất đến khách hàng, Reverse Logistics là dòng hàng ngược lại từ khách hàng về",
+            },
+            // --- Mindset & Kiến thức chung ---
+            {
+                id: "ms-l1", type: "single_choice", content: "Khi môi trường kinh doanh thay đổi nhanh, kỹ năng nào quan trọng nhất?", points: 10,
+                correct_answer: "Khả năng thích ứng và học hỏi liên tục",
+                options: [
+                    { id: "ml-1", content: "Kinh nghiệm lâu năm trong ngành", is_correct: false },
+                    { id: "ml-2", content: "Khả năng thích ứng và học hỏi liên tục", is_correct: true },
+                    { id: "ml-3", content: "Tuân thủ quy trình có sẵn", is_correct: false },
+                    { id: "ml-4", content: "Giữ nguyên cách làm đã thành công", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-l2", type: "single_choice", content: "An toàn lao động tại nhà máy là trách nhiệm của ai?", points: 10,
+                correct_answer: "Tất cả mọi người trong tổ chức",
+                options: [
+                    { id: "ml-5", content: "Chỉ phòng An toàn lao động", is_correct: false },
+                    { id: "ml-6", content: "Chỉ quản lý sản xuất", is_correct: false },
+                    { id: "ml-7", content: "Tất cả mọi người trong tổ chức", is_correct: true },
+                    { id: "ml-8", content: "Chỉ công nhân trực tiếp sản xuất", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-l3", type: "single_choice", content: "Phương pháp '5 Whys' được sử dụng để làm gì?", points: 10,
+                correct_answer: "Tìm nguyên nhân gốc rễ của vấn đề bằng cách hỏi 'Tại sao' liên tục",
+                options: [
+                    { id: "ml-9", content: "Đánh giá hiệu suất nhân viên", is_correct: false },
+                    { id: "ml-10", content: "Tìm nguyên nhân gốc rễ của vấn đề bằng cách hỏi 'Tại sao' liên tục", is_correct: true },
+                    { id: "ml-11", content: "Lập kế hoạch dự án theo 5 giai đoạn", is_correct: false },
+                    { id: "ml-12", content: "Phân loại sản phẩm lỗi", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-l4", type: "true_false", content: "ERP (Enterprise Resource Planning) là hệ thống tích hợp quản lý toàn bộ nguồn lực doanh nghiệp.", points: 5,
+                correct_answer: "true",
+                options: [
+                    { id: "ml-13", content: "Đúng", is_correct: true },
+                    { id: "ml-14", content: "Sai", is_correct: false },
+                ],
+            },
+            {
+                id: "ms-l5", type: "short_answer", content: "Bạn hiểu thế nào về 'tư duy chủ động' (proactive mindset) trong công việc? Cho ví dụ ngắn.", points: 15,
+                correct_answer: "chủ động tìm kiếm giải pháp, không chờ được giao việc, dự đoán vấn đề trước",
             },
         ],
     },
@@ -474,7 +603,7 @@ export default function CandidateTestPage() {
                         <div className={styles["test-info-grid"]}>
                             <div className={styles["test-info-item"]}>
                                 <div className={styles["test-info-value"]}>3 bộ đề</div>
-                                <div className={styles["test-info-label"]}>Marketing · Sales · Kỹ thuật</div>
+                                <div className={styles["test-info-label"]}>Finance · SC Planning · SC Logistics</div>
                             </div>
                             <div className={styles["test-info-item"]}>
                                 <div className={styles["test-info-value"]}>20–25 phút</div>
