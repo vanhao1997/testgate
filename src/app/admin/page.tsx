@@ -6,7 +6,7 @@ import * as XLSX from "xlsx";
 import { GroupPieChart, PassFailPieChart, ScoreDistributionChart, AvgByGroupChart, TimelineChart } from "./charts";
 import QuestionEditor from "./question-editor";
 import AdminGuide from "./admin-guide";
-import { ChartPie, ClipboardText, Gavel, NotePencil, DownloadSimple, X, CheckCircle, XCircle, ChartBar, Trophy, PencilSimple, Eye, EyeSlash, Info } from "@phosphor-icons/react";
+import { ChartPie, ClipboardText, Gavel, NotePencil, DownloadSimple, X, CheckCircle, XCircle, ChartBar, Trophy, PencilSimple, Eye, EyeSlash, Info, Funnel } from "@phosphor-icons/react";
 
 const ADMIN_PIN = "WFL2026";
 
@@ -50,6 +50,15 @@ export default function AdminPage() {
     const [pinError, setPinError] = useState("");
     const [showPin, setShowPin] = useState(false);
     const [activeTab, setActiveTab] = useState<"dashboard" | "submissions" | "judges" | "questions" | "guide">("dashboard");
+
+    // Export modal
+    const [showExport, setShowExport] = useState(false);
+    const [exportOpts, setExportOpts] = useState({
+        sbd: true, name: true, email: true, phone: true, group: true,
+        score: true, total: true, pct: true, result: true, time: true,
+        answers: true, judgeSheet: true,
+        filterGroup: "all" as string,
+    });
 
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [judges, setJudges] = useState<Judge[]>([]);
@@ -117,35 +126,40 @@ export default function AdminPage() {
 
     /* ====== Excel Export ====== */
     const exportToExcel = () => {
-        const dataToExport = (filterGroup === "all" ? submissions : submissions.filter(s => s.test_group === filterGroup));
+        const o = exportOpts;
+        const dataToExport = (o.filterGroup === "all" ? submissions : submissions.filter(s => s.test_group === o.filterGroup));
         const rows = dataToExport.map(s => {
-            const base: Record<string, string | number | boolean> = {
-                "Số báo danh": s.candidate_id || "",
-                "Họ tên": s.candidate_name,
-                "Email": s.candidate_email,
-                "SĐT": s.candidate_phone || "",
-                "Nhóm thi": groupLabel(s.test_group),
-                "Điểm": s.score,
-                "Tổng điểm": s.total_points,
-                "Phần trăm (%)": s.percentage,
-                "Kết quả": s.passed ? "Đạt" : "Chưa đạt",
-                "Thời gian nộp": new Date(s.submitted_at).toLocaleString("vi-VN"),
-            };
-            (s.answers || []).forEach((ans, idx) => {
-                base[`Câu ${idx + 1}`] = ans.answer_text || (ans.correct ? "Đúng" : "Sai");
-                base[`Điểm C${idx + 1}`] = ans.points;
-            });
+            const base: Record<string, string | number | boolean> = {};
+            if (o.sbd) base["Số báo danh"] = s.candidate_id || "";
+            if (o.name) base["Họ tên"] = s.candidate_name;
+            if (o.email) base["Email"] = s.candidate_email;
+            if (o.phone) base["SĐT"] = s.candidate_phone || "";
+            if (o.group) base["Nhóm thi"] = groupLabel(s.test_group);
+            if (o.score) base["Điểm"] = s.score;
+            if (o.total) base["Tổng điểm"] = s.total_points;
+            if (o.pct) base["Phần trăm (%)"] = s.percentage;
+            if (o.result) base["Kết quả"] = s.passed ? "Đạt" : "Chưa đạt";
+            if (o.time) base["Thời gian nộp"] = new Date(s.submitted_at).toLocaleString("vi-VN");
+            if (o.answers) {
+                (s.answers || []).forEach((ans, idx) => {
+                    base[`Câu ${idx + 1}`] = ans.answer_text || (ans.correct ? "Đúng" : "Sai");
+                    base[`Điểm C${idx + 1}`] = ans.points;
+                });
+            }
             return base;
         });
         const ws = XLSX.utils.json_to_sheet(rows);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Kết quả thi");
 
-        const judgeRows = judges.map(j => ({ "Họ tên": j.name, "Email": j.email, "Vai trò": j.role === "admin" ? "Admin" : "Giám khảo" }));
-        const ws2 = XLSX.utils.json_to_sheet(judgeRows);
-        XLSX.utils.book_append_sheet(wb, ws2, "Giám khảo");
+        if (o.judgeSheet) {
+            const judgeRows = judges.map(j => ({ "Họ tên": j.name, "Email": j.email, "Vai trò": j.role === "admin" ? "Admin" : "Giám khảo" }));
+            const ws2 = XLSX.utils.json_to_sheet(judgeRows);
+            XLSX.utils.book_append_sheet(wb, ws2, "Giám khảo");
+        }
 
         XLSX.writeFile(wb, `WFL_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        setShowExport(false);
     };
 
     // Stats
@@ -236,7 +250,7 @@ export default function AdminPage() {
                     <span>W-Future Leader</span>
                 </div>
                 <div className={styles.adminNavRight}>
-                    <button className={styles.exportBtn} onClick={exportToExcel}><DownloadSimple size={18} weight="bold" /> Tải Excel</button>
+                    <button className={styles.exportBtn} onClick={() => setShowExport(true)}><DownloadSimple size={18} weight="bold" /> Tải Excel</button>
                     <button onClick={() => { setAuthed(false); setPin(""); }}>Đăng xuất</button>
                 </div>
             </div>
@@ -357,7 +371,7 @@ export default function AdminPage() {
                                             <option value="sc-planning">SC Planning</option>
                                             <option value="sc-logistics">SC Logistics</option>
                                         </select>
-                                        <button className={styles.exportBtnSm} onClick={exportToExcel}><DownloadSimple size={16} /> Excel</button>
+                                        <button className={styles.exportBtnSm} onClick={() => setShowExport(true)}><DownloadSimple size={16} /> Excel</button>
                                     </div>
                                 </div>
                                 <table className={styles.dataTable}>
@@ -471,6 +485,87 @@ export default function AdminPage() {
                     </div>
                 </div>
             )}
+
+            {/* ====== EXPORT MODAL ====== */}
+            {showExport && (
+                <div className={styles.detailOverlay} onClick={() => setShowExport(false)}>
+                    <div className={styles.detailPanel} onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
+                        <div className={styles.detailHeader}>
+                            <h2><Funnel size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Tùy chỉnh xuất Excel</h2>
+                            <button className={styles.closeBtn} onClick={() => setShowExport(false)}><X size={20} /></button>
+                        </div>
+                        <div className={styles.detailBody} style={{ padding: "1.25rem" }}>
+                            {/* Group filter */}
+                            <div style={{ marginBottom: "1rem" }}>
+                                <label style={{ fontWeight: 600, fontSize: "0.82rem", display: "block", marginBottom: 4 }}>Lọc theo nhóm thi</label>
+                                <select value={exportOpts.filterGroup} onChange={e => setExportOpts({ ...exportOpts, filterGroup: e.target.value })} style={{ width: "100%", padding: "7px 10px", borderRadius: 6, border: "1px solid var(--color-bg-tertiary)", fontSize: "0.85rem" }}>
+                                    <option value="all">Tất cả nhóm</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="sc-planning">SC Planning</option>
+                                    <option value="sc-logistics">SC Logistics</option>
+                                </select>
+                            </div>
+
+                            {/* Column checkboxes */}
+                            <div style={{ marginBottom: "1rem" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                    <label style={{ fontWeight: 600, fontSize: "0.82rem" }}>Thông tin ứng viên</label>
+                                    <div style={{ display: "flex", gap: 8 }}>
+                                        <button onClick={() => setExportOpts({ ...exportOpts, sbd: true, name: true, email: true, phone: true })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", fontWeight: 600 }}>Chọn tất cả</button>
+                                        <button onClick={() => setExportOpts({ ...exportOpts, sbd: false, name: false, email: false, phone: false })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontWeight: 600 }}>Bỏ chọn</button>
+                                    </div>
+                                </div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 16px" }}>
+                                    <ExportCheck label="Số báo danh" checked={exportOpts.sbd} onChange={v => setExportOpts({ ...exportOpts, sbd: v })} />
+                                    <ExportCheck label="Họ tên" checked={exportOpts.name} onChange={v => setExportOpts({ ...exportOpts, name: v })} />
+                                    <ExportCheck label="Email" checked={exportOpts.email} onChange={v => setExportOpts({ ...exportOpts, email: v })} />
+                                    <ExportCheck label="Số điện thoại" checked={exportOpts.phone} onChange={v => setExportOpts({ ...exportOpts, phone: v })} />
+                                </div>
+                            </div>
+
+                            <div style={{ marginBottom: "1rem" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                    <label style={{ fontWeight: 600, fontSize: "0.82rem" }}>Kết quả thi</label>
+                                    <div style={{ display: "flex", gap: 8 }}>
+                                        <button onClick={() => setExportOpts({ ...exportOpts, group: true, score: true, total: true, pct: true, result: true, time: true })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", fontWeight: 600 }}>Chọn tất cả</button>
+                                        <button onClick={() => setExportOpts({ ...exportOpts, group: false, score: false, total: false, pct: false, result: false, time: false })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontWeight: 600 }}>Bỏ chọn</button>
+                                    </div>
+                                </div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 16px" }}>
+                                    <ExportCheck label="Nhóm thi" checked={exportOpts.group} onChange={v => setExportOpts({ ...exportOpts, group: v })} />
+                                    <ExportCheck label="Điểm" checked={exportOpts.score} onChange={v => setExportOpts({ ...exportOpts, score: v })} />
+                                    <ExportCheck label="Tổng điểm" checked={exportOpts.total} onChange={v => setExportOpts({ ...exportOpts, total: v })} />
+                                    <ExportCheck label="Phần trăm (%)" checked={exportOpts.pct} onChange={v => setExportOpts({ ...exportOpts, pct: v })} />
+                                    <ExportCheck label="Kết quả (Đạt/Chưa)" checked={exportOpts.result} onChange={v => setExportOpts({ ...exportOpts, result: v })} />
+                                    <ExportCheck label="Thời gian nộp" checked={exportOpts.time} onChange={v => setExportOpts({ ...exportOpts, time: v })} />
+                                </div>
+                            </div>
+
+                            <div style={{ marginBottom: "1.25rem" }}>
+                                <label style={{ fontWeight: 600, fontSize: "0.82rem", display: "block", marginBottom: 8 }}>Nội dung bổ sung</label>
+                                <ExportCheck label="Chi tiết câu trả lời từng câu" checked={exportOpts.answers} onChange={v => setExportOpts({ ...exportOpts, answers: v })} />
+                                <ExportCheck label="Sheet danh sách Giám khảo" checked={exportOpts.judgeSheet} onChange={v => setExportOpts({ ...exportOpts, judgeSheet: v })} />
+                            </div>
+
+                            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                                <button onClick={() => setShowExport(false)} style={{ padding: "8px 20px", background: "var(--color-bg-tertiary)", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: "0.85rem" }}>Hủy</button>
+                                <button onClick={exportToExcel} style={{ padding: "8px 24px", background: "var(--color-primary)", color: "white", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: "0.85rem", display: "flex", alignItems: "center", gap: 6 }}>
+                                    <DownloadSimple size={16} weight="bold" /> Tải xuống
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
+    );
+}
+
+function ExportCheck({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+    return (
+        <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.82rem", cursor: "pointer", padding: "3px 0" }}>
+            <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} style={{ width: 15, height: 15, accentColor: "var(--color-primary)" }} />
+            {label}
+        </label>
     );
 }
