@@ -1,0 +1,400 @@
+/* === Question Editor Styles === */
+.qeHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.qeHeader h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.qeAddBtn {
+    padding: 8px 20px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.qeAddBtn:hover {
+    background: var(--color-primary-hover);
+}
+
+.qeFormCard {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--color-bg-tertiary);
+    margin-bottom: 1rem;
+}
+
+.qeFormCard h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.qeFormGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.qeFormCard label,
+.qeQForm label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.qeFormCard input,
+.qeFormCard select,
+.qeQForm input,
+.qeQForm select,
+.qeQForm textarea {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--color-bg-tertiary);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background: var(--color-bg-input);
+}
+
+.qeQForm textarea {
+    min-height: 50px;
+    resize: vertical;
+}
+
+.qeFormActions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.qeSaveBtn {
+    padding: 6px 18px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.82rem;
+}
+
+.qeSaveBtn:hover {
+    background: var(--color-primary-hover);
+}
+
+.qeSaveBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.qeCancelBtn {
+    padding: 6px 18px;
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.82rem;
+}
+
+.qeGroupCard {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--color-bg-tertiary);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.qeGroupHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-bg-tertiary);
+}
+
+.qeGroupTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.qeGroupIcon {
+    font-size: 1.3rem;
+}
+
+.qeGroupTitle h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.qeGroupMeta {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+    background: var(--color-bg-tertiary);
+    padding: 2px 10px;
+    border-radius: 10px;
+}
+
+.qeBadgeInactive {
+    font-size: 0.7rem;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.qeGroupActions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.qeGroupActions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.qeGroupActions button:hover {
+    background: var(--color-bg-tertiary);
+}
+
+.qeEditInline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.qeEditInline input {
+    padding: 5px 8px;
+    border: 1px solid var(--color-bg-tertiary);
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.qeEditInline span {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+}
+
+.qeQuestionList {
+    padding: 0;
+}
+
+.qeQuestionItem {
+    border-bottom: 1px solid var(--color-bg-tertiary);
+}
+
+.qeQuestionItem:last-child {
+    border-bottom: none;
+}
+
+.qeQuestionRow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1.25rem;
+    transition: background 0.15s;
+}
+
+.qeQuestionRow:hover {
+    background: var(--color-primary-light);
+}
+
+.qeQNum {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-tertiary);
+    background: var(--color-bg-tertiary);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.qeQContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.qeQType {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 6px;
+}
+
+.qeQText {
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+}
+
+.qeQPoints {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.qeQActions {
+    display: flex;
+    gap: 0.15rem;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.qeQuestionRow:hover .qeQActions {
+    opacity: 1;
+}
+
+.qeQActions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--color-text-tertiary);
+}
+
+.qeQActions button:hover {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+}
+
+.qeQForm {
+    padding: 1rem 1.25rem;
+    background: #fefbf0;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    margin: 0.5rem 1rem;
+}
+
+.qeQFormRow {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.qeOptions {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--color-bg-tertiary);
+}
+
+.qeOptionRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.qeOptionInput {
+    flex: 1;
+}
+
+.qeOptDelete {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 2px 6px;
+}
+
+.qeAddOptBtn {
+    margin-top: 0.5rem;
+    padding: 4px 12px;
+    background: none;
+    border: 1px dashed var(--color-bg-tertiary);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.qeAddOptBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.qeTFRow {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.5rem 0;
+}
+
+.qeTFRow label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+    text-transform: none;
+    cursor: pointer;
+}
+
+.qeAddQBtn {
+    width: 100%;
+    padding: 0.6rem;
+    background: none;
+    border: none;
+    border-top: 1px dashed var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.qeAddQBtn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+    .qeQFormRow {
+        flex-direction: column;
+    }
+
+    .qeEditInline {
+        flex-wrap: wrap;
+    }
+}

@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import styles from "./admin.module.css";
 import * as XLSX from "xlsx";
 import { GroupPieChart, PassFailPieChart, ScoreDistributionChart, AvgByGroupChart, TimelineChart } from "./charts";
+import QuestionEditor from "./question-editor";
 
 const ADMIN_PIN = "WFL2026";
 
@@ -45,7 +46,7 @@ export default function AdminPage() {
     const [authed, setAuthed] = useState(false);
     const [pin, setPin] = useState("");
     const [pinError, setPinError] = useState("");
-    const [activeTab, setActiveTab] = useState<"dashboard" | "submissions" | "judges">("dashboard");
+    const [activeTab, setActiveTab] = useState<"dashboard" | "submissions" | "judges" | "questions">("dashboard");
 
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [judges, setJudges] = useState<Judge[]>([]);
@@ -236,6 +237,7 @@ export default function AdminPage() {
                 <button className={`${styles.tab} ${activeTab === "dashboard" ? styles.tabActive : ""}`} onClick={() => setActiveTab("dashboard")}>📊 Tổng quan</button>
                 <button className={`${styles.tab} ${activeTab === "submissions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("submissions")}>📋 Bài nộp</button>
                 <button className={`${styles.tab} ${activeTab === "judges" ? styles.tabActive : ""}`} onClick={() => setActiveTab("judges")}>👨‍⚖️ Giám khảo</button>
+                <button className={`${styles.tab} ${activeTab === "questions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("questions")}>📝 Bộ đề</button>
             </div>
 
             <div className={styles.content}>
@@ -396,6 +398,9 @@ export default function AdminPage() {
                                 </div>
                             </>
                         )}
+
+                        {/* ====== QUESTIONS ====== */}
+                        {activeTab === "questions" && <QuestionEditor />}
                     </>
                 )}
             </div>

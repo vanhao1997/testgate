@@ -9,8 +9,14 @@ import styles from "../test.module.css";
 type AnswerMap = Record<string, string | string[]>;
 
 /* ==========================================
-   3 bộ câu hỏi cho 3 nhóm ứng viên (HARDCODE)
+   Dữ liệu bộ đề được tải từ Supabase
    ========================================== */
+const ICON_CLASS_MAP: Record<string, string> = {
+    "finance": "group-icon-marketing",
+    "sc-planning": "group-icon-sales",
+    "sc-logistics": "group-icon-tech",
+};
+
 interface QuestionDef {
     id: string;
     type: "multiple_choice" | "single_choice" | "true_false" | "short_answer";
@@ -29,438 +35,6 @@ interface TestGroup {
     durationMinutes: number;
     questions: QuestionDef[];
 }
-
-const TEST_GROUPS: TestGroup[] = [
-    {
-        id: "finance",
-        title: "Finance",
-        description: "Kế toán, tài chính doanh nghiệp, phân tích chi phí và quản trị ngân sách",
-        icon: "💰",
-        iconClass: "group-icon-marketing",
-        durationMinutes: 25,
-        questions: [
-            {
-                id: "fin-1", type: "single_choice", content: "COGS là viết tắt của thuật ngữ nào?", points: 10,
-                correct_answer: "Cost of Goods Sold",
-                options: [
-                    { id: "fo-1", content: "Cost of Goods Sold", is_correct: true },
-                    { id: "fo-2", content: "Cost of General Services", is_correct: false },
-                    { id: "fo-3", content: "Cash on Goods Supplied", is_correct: false },
-                    { id: "fo-4", content: "Cost of Global Sales", is_correct: false },
-                ],
-            },
-            {
-                id: "fin-2", type: "single_choice", content: "Báo cáo tài chính nào thể hiện tình hình tài sản, nợ phải trả và vốn chủ sở hữu tại một thời điểm?", points: 10,
-                correct_answer: "Bảng cân đối kế toán (Balance Sheet)",
-                options: [
-                    { id: "fo-5", content: "Báo cáo kết quả kinh doanh", is_correct: false },
-                    { id: "fo-6", content: "Bảng cân đối kế toán (Balance Sheet)", is_correct: true },
-                    { id: "fo-7", content: "Báo cáo lưu chuyển tiền tệ", is_correct: false },
-                    { id: "fo-8", content: "Thuyết minh báo cáo tài chính", is_correct: false },
-                ],
-            },
-            {
-                id: "fin-3", type: "true_false", content: "Gross Profit = Revenue - COGS.", points: 5,
-                correct_answer: "true",
-                options: [
-                    { id: "fo-9", content: "Đúng", is_correct: true },
-                    { id: "fo-10", content: "Sai", is_correct: false },
-                ],
-            },
-            {
-                id: "fin-4", type: "single_choice", content: "ROI (Return on Investment) được tính bằng công thức nào?", points: 10,
-                correct_answer: "(Lợi nhuận ròng / Chi phí đầu tư) × 100%",
-                options: [
-                    { id: "fo-11", content: "(Doanh thu / Chi phí) × 100%", is_correct: false },
-                    { id: "fo-12", content: "(Lợi nhuận ròng / Chi phí đầu tư) × 100%", is_correct: true },
-                    { id: "fo-13", content: "(Doanh thu - Chi phí) / Doanh thu", is_correct: false },
-                    { id: "fo-14", content: "Lợi nhuận ròng / Tổng tài sản", is_correct: false },
-                ],
-            },
-            {
-                id: "fin-5", type: "single_choice", content: "Trong phân tích Break-even, điểm hòa vốn xảy ra khi nào?", points: 10,
-                correct_answer: "Tổng doanh thu = Tổng chi phí",
-                options: [
-                    { id: "fo-15", content: "Tổng doanh thu > Tổng chi phí", is_correct: false },
-                    { id: "fo-16", content: "Tổng doanh thu = Tổng chi phí", is_correct: true },
-                    { id: "fo-17", content: "Lợi nhuận gộp = 0", is_correct: false },
-                    { id: "fo-18", content: "Biến phí = Định phí", is_correct: false },
-                ],
-            },
-            {
-                id: "fin-6", type: "multiple_choice", content: "Những chỉ số nào thuộc nhóm chỉ số thanh khoản (Liquidity Ratios)? (chọn nhiều)", points: 15,
-                correct_answer: ["Current Ratio", "Quick Ratio", "Cash Ratio"],
-                options: [
-                    { id: "fo-19", content: "Current Ratio", is_correct: true },
-                    { id: "fo-20", content: "Quick Ratio", is_correct: true },
-                    { id: "fo-21", content: "Cash Ratio", is_correct: true },
-                    { id: "fo-22", content: "Debt-to-Equity Ratio", is_correct: false },
-                ],
-            },
-            {
-                id: "fin-7", type: "true_false", content: "Khấu hao (Depreciation) là chi phí bằng tiền mặt thực tế phát sinh.", points: 5,
-                correct_answer: "false",
-                options: [
-                    { id: "fo-23", content: "Đúng", is_correct: false },
-                    { id: "fo-24", content: "Sai", is_correct: true },
-                ],
-            },
-            {
-                id: "fin-8", type: "single_choice", content: "Working Capital (Vốn lưu động) được tính bằng công thức nào?", points: 10,
-                correct_answer: "Tài sản ngắn hạn - Nợ ngắn hạn",
-                options: [
-                    { id: "fo-25", content: "Tổng tài sản - Tổng nợ", is_correct: false },
-                    { id: "fo-26", content: "Tài sản ngắn hạn - Nợ ngắn hạn", is_correct: true },
-                    { id: "fo-27", content: "Vốn chủ sở hữu - Nợ dài hạn", is_correct: false },
-                    { id: "fo-28", content: "Doanh thu - Chi phí hoạt động", is_correct: false },
-                ],
-            },
-            {
-                id: "fin-9", type: "single_choice", content: "Trong ngành sản xuất FMCG, chi phí nào thường chiếm tỷ trọng lớn nhất?", points: 10,
-                correct_answer: "Chi phí nguyên vật liệu",
-                options: [
-                    { id: "fo-29", content: "Chi phí marketing", is_correct: false },
-                    { id: "fo-30", content: "Chi phí nguyên vật liệu", is_correct: true },
-                    { id: "fo-31", content: "Chi phí nhân sự văn phòng", is_correct: false },
-                    { id: "fo-32", content: "Chi phí nghiên cứu phát triển", is_correct: false },
-                ],
-            },
-            {
-                id: "fin-10", type: "short_answer", content: "Giải thích ngắn gọn sự khác biệt giữa OPEX (Operating Expenditure) và CAPEX (Capital Expenditure).", points: 15,
-                correct_answer: "OPEX là chi phí vận hành hàng ngày, CAPEX là chi phí đầu tư tài sản dài hạn",
-            },
-            // --- Mindset & Kiến thức chung ---
-            {
-                id: "ms-f1", type: "single_choice", content: "Khi gặp một vấn đề phức tạp trong công việc, bạn nên ưu tiên làm gì đầu tiên?", points: 10,
-                correct_answer: "Phân tích nguyên nhân gốc rễ trước khi đưa ra giải pháp",
-                options: [
-                    { id: "mf-1", content: "Báo cáo ngay cho cấp trên và chờ chỉ đạo", is_correct: false },
-                    { id: "mf-2", content: "Phân tích nguyên nhân gốc rễ trước khi đưa ra giải pháp", is_correct: true },
-                    { id: "mf-3", content: "Áp dụng cách giải quyết từ kinh nghiệm cũ ngay lập tức", is_correct: false },
-                    { id: "mf-4", content: "Bỏ qua và tập trung vào công việc khác", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-f2", type: "single_choice", content: "PDCA trong cải tiến liên tục là viết tắt của gì?", points: 10,
-                correct_answer: "Plan - Do - Check - Act",
-                options: [
-                    { id: "mf-5", content: "Plan - Do - Check - Act", is_correct: true },
-                    { id: "mf-6", content: "Process - Design - Control - Analyze", is_correct: false },
-                    { id: "mf-7", content: "Prepare - Deliver - Confirm - Adjust", is_correct: false },
-                    { id: "mf-8", content: "Plan - Develop - Complete - Assess", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-f3", type: "single_choice", content: "Tư duy 'Growth Mindset' khác với 'Fixed Mindset' ở điểm nào?", points: 10,
-                correct_answer: "Tin rằng năng lực có thể phát triển qua nỗ lực và học hỏi",
-                options: [
-                    { id: "mf-9", content: "Tin rằng năng lực có thể phát triển qua nỗ lực và học hỏi", is_correct: true },
-                    { id: "mf-10", content: "Luôn tập trung vào kết quả cuối cùng", is_correct: false },
-                    { id: "mf-11", content: "Tránh nhận thêm trách nhiệm mới", is_correct: false },
-                    { id: "mf-12", content: "Chỉ làm những việc mình giỏi sẵn", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-f4", type: "true_false", content: "Trong môi trường sản xuất, Kaizen có nghĩa là cải tiến liên tục từng bước nhỏ.", points: 5,
-                correct_answer: "true",
-                options: [
-                    { id: "mf-13", content: "Đúng", is_correct: true },
-                    { id: "mf-14", content: "Sai", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-f5", type: "short_answer", content: "Theo bạn, đâu là phẩm chất quan trọng nhất của một nhà quản lý sản xuất tương lai? Giải thích ngắn gọn.", points: 15,
-                correct_answer: "khả năng lãnh đạo, trách nhiệm, học hỏi, giải quyết vấn đề",
-            },
-        ],
-    },
-    {
-        id: "sc-planning",
-        title: "Supply Chain Planning",
-        description: "Hoạch định chuỗi cung ứng, dự báo nhu cầu, quản lý tồn kho và S&OP",
-        icon: "📊",
-        iconClass: "group-icon-sales",
-        durationMinutes: 25,
-        questions: [
-            {
-                id: "scp-1", type: "single_choice", content: "S&OP là viết tắt của thuật ngữ nào?", points: 10,
-                correct_answer: "Sales and Operations Planning",
-                options: [
-                    { id: "spo-1", content: "Sales and Operations Planning", is_correct: true },
-                    { id: "spo-2", content: "Supply and Order Processing", is_correct: false },
-                    { id: "spo-3", content: "Strategic Operational Plan", is_correct: false },
-                    { id: "spo-4", content: "Stock and Output Planning", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-2", type: "single_choice", content: "Phương pháp dự báo nhu cầu nào sử dụng dữ liệu lịch sử để dự đoán tương lai?", points: 10,
-                correct_answer: "Phương pháp định lượng (Quantitative forecasting)",
-                options: [
-                    { id: "spo-5", content: "Phương pháp Delphi", is_correct: false },
-                    { id: "spo-6", content: "Phương pháp định lượng (Quantitative forecasting)", is_correct: true },
-                    { id: "spo-7", content: "Phương pháp khảo sát thị trường", is_correct: false },
-                    { id: "spo-8", content: "Phương pháp chuyên gia", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-3", type: "true_false", content: "Safety Stock (tồn kho an toàn) giúp giảm thiểu rủi ro hết hàng khi nhu cầu biến động.", points: 5,
-                correct_answer: "true",
-                options: [
-                    { id: "spo-9", content: "Đúng", is_correct: true },
-                    { id: "spo-10", content: "Sai", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-4", type: "single_choice", content: "MRP là viết tắt của gì?", points: 10,
-                correct_answer: "Material Requirements Planning",
-                options: [
-                    { id: "spo-11", content: "Manufacturing Resource Planning", is_correct: false },
-                    { id: "spo-12", content: "Material Requirements Planning", is_correct: true },
-                    { id: "spo-13", content: "Market Research Planning", is_correct: false },
-                    { id: "spo-14", content: "Maintenance Repair Protocol", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-5", type: "single_choice", content: "Phân tích ABC trong quản lý tồn kho dựa trên nguyên tắc nào?", points: 10,
-                correct_answer: "Nguyên tắc Pareto 80/20",
-                options: [
-                    { id: "spo-15", content: "Phân loại theo kích thước sản phẩm", is_correct: false },
-                    { id: "spo-16", content: "Nguyên tắc Pareto 80/20", is_correct: true },
-                    { id: "spo-17", content: "Phân loại theo ngày hết hạn", is_correct: false },
-                    { id: "spo-18", content: "Phân loại theo nhà cung cấp", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-6", type: "multiple_choice", content: "Những yếu tố nào ảnh hưởng đến Demand Planning? (chọn nhiều)", points: 15,
-                correct_answer: ["Mùa vụ / Seasonality", "Chương trình khuyến mãi", "Xu hướng thị trường"],
-                options: [
-                    { id: "spo-19", content: "Mùa vụ / Seasonality", is_correct: true },
-                    { id: "spo-20", content: "Chương trình khuyến mãi", is_correct: true },
-                    { id: "spo-21", content: "Xu hướng thị trường", is_correct: true },
-                    { id: "spo-22", content: "Màu sắc logo công ty", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-7", type: "true_false", content: "EOQ (Economic Order Quantity) là mô hình giúp xác định số lượng đặt hàng tối ưu nhằm giảm thiểu tổng chi phí tồn kho.", points: 5,
-                correct_answer: "true",
-                options: [
-                    { id: "spo-23", content: "Đúng", is_correct: true },
-                    { id: "spo-24", content: "Sai", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-8", type: "single_choice", content: "Lead Time trong chuỗi cung ứng là gì?", points: 10,
-                correct_answer: "Thời gian từ khi đặt hàng đến khi nhận hàng",
-                options: [
-                    { id: "spo-25", content: "Thời gian sản xuất một sản phẩm", is_correct: false },
-                    { id: "spo-26", content: "Thời gian từ khi đặt hàng đến khi nhận hàng", is_correct: true },
-                    { id: "spo-27", content: "Thời gian giao hàng đến khách hàng", is_correct: false },
-                    { id: "spo-28", content: "Thời gian kiểm tra chất lượng", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-9", type: "single_choice", content: "KPI nào đo lường độ chính xác của dự báo nhu cầu?", points: 10,
-                correct_answer: "Forecast Accuracy (MAPE)",
-                options: [
-                    { id: "spo-29", content: "Inventory Turnover", is_correct: false },
-                    { id: "spo-30", content: "Forecast Accuracy (MAPE)", is_correct: true },
-                    { id: "spo-31", content: "Fill Rate", is_correct: false },
-                    { id: "spo-32", content: "On-Time Delivery", is_correct: false },
-                ],
-            },
-            {
-                id: "scp-10", type: "short_answer", content: "Giải thích ngắn gọn Bullwhip Effect (Hiệu ứng roi da) trong chuỗi cung ứng.", points: 15,
-                correct_answer: "Hiện tượng biến động đơn hàng tăng dần khi đi ngược chuỗi cung ứng từ khách hàng đến nhà cung cấp",
-            },
-            // --- Mindset & Kiến thức chung ---
-            {
-                id: "ms-s1", type: "single_choice", content: "Khi làm việc nhóm, điều quan trọng nhất để đạt hiệu quả là gì?", points: 10,
-                correct_answer: "Giao tiếp rõ ràng và phân công trách nhiệm cụ thể",
-                options: [
-                    { id: "ms-1", content: "Mỗi người tự làm phần việc của mình", is_correct: false },
-                    { id: "ms-2", content: "Giao tiếp rõ ràng và phân công trách nhiệm cụ thể", is_correct: true },
-                    { id: "ms-3", content: "Luôn đồng ý với ý kiến số đông", is_correct: false },
-                    { id: "ms-4", content: "Tập trung hoàn thành nhanh nhất có thể", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-s2", type: "single_choice", content: "5S trong quản lý sản xuất bao gồm những gì?", points: 10,
-                correct_answer: "Sàng lọc, Sắp xếp, Sạch sẽ, Săn sóc, Sẵn sàng",
-                options: [
-                    { id: "ms-5", content: "Sàng lọc, Sắp xếp, Sạch sẽ, Săn sóc, Sẵn sàng", is_correct: true },
-                    { id: "ms-6", content: "Speed, Safety, Service, Skill, Standard", is_correct: false },
-                    { id: "ms-7", content: "Sáng tạo, Siêng năng, Sẵn sàng, Số liệu, Sức khỏe", is_correct: false },
-                    { id: "ms-8", content: "Sort, Set, Shine, Standardize, Sustain (nhưng không phiên bản trên)", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-s3", type: "single_choice", content: "KPI là viết tắt của gì?", points: 10,
-                correct_answer: "Key Performance Indicator",
-                options: [
-                    { id: "ms-9", content: "Key Performance Indicator", is_correct: true },
-                    { id: "ms-10", content: "Knowledge Process Integration", is_correct: false },
-                    { id: "ms-11", content: "Key Product Index", is_correct: false },
-                    { id: "ms-12", content: "Knowledgeable Professional Input", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-s4", type: "true_false", content: "Lean Manufacturing tập trung vào việc loại bỏ lãng phí (waste) trong quy trình sản xuất.", points: 5,
-                correct_answer: "true",
-                options: [
-                    { id: "ms-13", content: "Đúng", is_correct: true },
-                    { id: "ms-14", content: "Sai", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-s5", type: "short_answer", content: "Bạn xử lý thế nào khi nhận được phản hồi tiêu cực từ cấp trên về công việc của mình?", points: 15,
-                correct_answer: "lắng nghe, rút kinh nghiệm, cải thiện, không phòng thủ",
-            },
-        ],
-    },
-    {
-        id: "sc-logistics",
-        title: "Supply Chain Logistics",
-        description: "Vận tải, kho bãi, phân phối, quản lý đơn hàng và tối ưu logistics",
-        icon: "🚛",
-        iconClass: "group-icon-tech",
-        durationMinutes: 25,
-        questions: [
-            {
-                id: "scl-1", type: "single_choice", content: "3PL là viết tắt của thuật ngữ nào?", points: 10,
-                correct_answer: "Third-Party Logistics",
-                options: [
-                    { id: "lo-1", content: "Third-Party Logistics", is_correct: true },
-                    { id: "lo-2", content: "Three-Phase Loading", is_correct: false },
-                    { id: "lo-3", content: "Third-Point Leverage", is_correct: false },
-                    { id: "lo-4", content: "Total Product Lifecycle", is_correct: false },
-                ],
-            },
-            {
-                id: "scl-2", type: "single_choice", content: "Incoterms 2020 quy định điều gì trong thương mại quốc tế?", points: 10,
-                correct_answer: "Trách nhiệm chi phí và rủi ro giữa người mua và người bán",
-                options: [
-                    { id: "lo-5", content: "Thuế nhập khẩu giữa các quốc gia", is_correct: false },
-                    { id: "lo-6", content: "Trách nhiệm chi phí và rủi ro giữa người mua và người bán", is_correct: true },
-                    { id: "lo-7", content: "Tiêu chuẩn chất lượng sản phẩm", is_correct: false },
-                    { id: "lo-8", content: "Quy trình thông quan hải quan", is_correct: false },
-                ],
-            },
-            {
-                id: "scl-3", type: "true_false", content: "Cross-docking là phương pháp giúp hàng hóa đi thẳng từ xe nhận đến xe giao mà không cần lưu kho.", points: 5,
-                correct_answer: "true",
-                options: [
-                    { id: "lo-9", content: "Đúng", is_correct: true },
-                    { id: "lo-10", content: "Sai", is_correct: false },
-                ],
-            },
-            {
-                id: "scl-4", type: "single_choice", content: "WMS là viết tắt của gì?", points: 10,
-                correct_answer: "Warehouse Management System",
-                options: [
-                    { id: "lo-11", content: "Warehouse Management System", is_correct: true },
-                    { id: "lo-12", content: "Wholesale Market Strategy", is_correct: false },
-                    { id: "lo-13", content: "Workflow Monitoring Software", is_correct: false },
-                    { id: "lo-14", content: "Weight Measurement Standard", is_correct: false },
-                ],
-            },
-            {
-                id: "scl-5", type: "single_choice", content: "Trong quản lý kho, phương pháp FIFO có nghĩa là gì?", points: 10,
-                correct_answer: "First In, First Out — Hàng nhập trước được xuất trước",
-                options: [
-                    { id: "lo-15", content: "First In, First Out — Hàng nhập trước được xuất trước", is_correct: true },
-                    { id: "lo-16", content: "First In, Final Output — Kiểm tra lô đầu tiên", is_correct: false },
-                    { id: "lo-17", content: "Final Inventory For Order — Tồn kho cuối kỳ", is_correct: false },
-                    { id: "lo-18", content: "Fast Input, Fast Output — Xử lý nhanh", is_correct: false },
-                ],
-            },
-            {
-                id: "scl-6", type: "multiple_choice", content: "Những phương thức vận tải nào thường được sử dụng trong logistics? (chọn nhiều)", points: 15,
-                correct_answer: ["Đường bộ (Road)", "Đường biển (Sea)", "Đường hàng không (Air)"],
-                options: [
-                    { id: "lo-19", content: "Đường bộ (Road)", is_correct: true },
-                    { id: "lo-20", content: "Đường biển (Sea)", is_correct: true },
-                    { id: "lo-21", content: "Đường hàng không (Air)", is_correct: true },
-                    { id: "lo-22", content: "Đường ống dẫn tâm linh", is_correct: false },
-                ],
-            },
-            {
-                id: "scl-7", type: "true_false", content: "Last Mile Delivery là giai đoạn vận chuyển hàng từ nhà máy đến kho trung chuyển.", points: 5,
-                correct_answer: "false",
-                options: [
-                    { id: "lo-23", content: "Đúng", is_correct: false },
-                    { id: "lo-24", content: "Sai", is_correct: true },
-                ],
-            },
-            {
-                id: "scl-8", type: "single_choice", content: "TMS (Transportation Management System) giúp tối ưu điều gì?", points: 10,
-                correct_answer: "Lập kế hoạch, thực thi và tối ưu hóa vận chuyển hàng hóa",
-                options: [
-                    { id: "lo-25", content: "Quản lý nhân sự kho hàng", is_correct: false },
-                    { id: "lo-26", content: "Lập kế hoạch, thực thi và tối ưu hóa vận chuyển hàng hóa", is_correct: true },
-                    { id: "lo-27", content: "Quản lý chất lượng sản phẩm", is_correct: false },
-                    { id: "lo-28", content: "Theo dõi tài chính doanh nghiệp", is_correct: false },
-                ],
-            },
-            {
-                id: "scl-9", type: "single_choice", content: "Chỉ số OTD (On-Time Delivery) đo lường điều gì?", points: 10,
-                correct_answer: "Tỷ lệ đơn hàng giao đúng hẹn so với tổng đơn hàng",
-                options: [
-                    { id: "lo-29", content: "Tổng số đơn hàng trong tháng", is_correct: false },
-                    { id: "lo-30", content: "Tỷ lệ đơn hàng giao đúng hẹn so với tổng đơn hàng", is_correct: true },
-                    { id: "lo-31", content: "Chi phí vận chuyển trung bình", is_correct: false },
-                    { id: "lo-32", content: "Số lần xe xuất kho mỗi ngày", is_correct: false },
-                ],
-            },
-            {
-                id: "scl-10", type: "short_answer", content: "Giải thích ngắn gọn sự khác biệt giữa Reverse Logistics và Forward Logistics.", points: 15,
-                correct_answer: "Forward Logistics là dòng hàng từ nhà sản xuất đến khách hàng, Reverse Logistics là dòng hàng ngược lại từ khách hàng về",
-            },
-            // --- Mindset & Kiến thức chung ---
-            {
-                id: "ms-l1", type: "single_choice", content: "Khi môi trường kinh doanh thay đổi nhanh, kỹ năng nào quan trọng nhất?", points: 10,
-                correct_answer: "Khả năng thích ứng và học hỏi liên tục",
-                options: [
-                    { id: "ml-1", content: "Kinh nghiệm lâu năm trong ngành", is_correct: false },
-                    { id: "ml-2", content: "Khả năng thích ứng và học hỏi liên tục", is_correct: true },
-                    { id: "ml-3", content: "Tuân thủ quy trình có sẵn", is_correct: false },
-                    { id: "ml-4", content: "Giữ nguyên cách làm đã thành công", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-l2", type: "single_choice", content: "An toàn lao động tại nhà máy là trách nhiệm của ai?", points: 10,
-                correct_answer: "Tất cả mọi người trong tổ chức",
-                options: [
-                    { id: "ml-5", content: "Chỉ phòng An toàn lao động", is_correct: false },
-                    { id: "ml-6", content: "Chỉ quản lý sản xuất", is_correct: false },
-                    { id: "ml-7", content: "Tất cả mọi người trong tổ chức", is_correct: true },
-                    { id: "ml-8", content: "Chỉ công nhân trực tiếp sản xuất", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-l3", type: "single_choice", content: "Phương pháp '5 Whys' được sử dụng để làm gì?", points: 10,
-                correct_answer: "Tìm nguyên nhân gốc rễ của vấn đề bằng cách hỏi 'Tại sao' liên tục",
-                options: [
-                    { id: "ml-9", content: "Đánh giá hiệu suất nhân viên", is_correct: false },
-                    { id: "ml-10", content: "Tìm nguyên nhân gốc rễ của vấn đề bằng cách hỏi 'Tại sao' liên tục", is_correct: true },
-                    { id: "ml-11", content: "Lập kế hoạch dự án theo 5 giai đoạn", is_correct: false },
-                    { id: "ml-12", content: "Phân loại sản phẩm lỗi", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-l4", type: "true_false", content: "ERP (Enterprise Resource Planning) là hệ thống tích hợp quản lý toàn bộ nguồn lực doanh nghiệp.", points: 5,
-                correct_answer: "true",
-                options: [
-                    { id: "ml-13", content: "Đúng", is_correct: true },
-                    { id: "ml-14", content: "Sai", is_correct: false },
-                ],
-            },
-            {
-                id: "ms-l5", type: "short_answer", content: "Bạn hiểu thế nào về 'tư duy chủ động' (proactive mindset) trong công việc? Cho ví dụ ngắn.", points: 15,
-                correct_answer: "chủ động tìm kiếm giải pháp, không chờ được giao việc, dự đoán vấn đề trước",
-            },
-        ],
-    },
-];
 
 /* ==========================================
    Chấm điểm
@@ -520,6 +94,49 @@ export default function CandidateTestPage() {
     const [totalTime, setTotalTime] = useState(0);
     const [saving, setSaving] = useState(false);
     const [showThankYou, setShowThankYou] = useState(false);
+
+    // === Load test groups from Supabase ===
+    const [testGroups, setTestGroups] = useState<TestGroup[]>([]);
+    const [loadingGroups, setLoadingGroups] = useState(true);
+
+    useEffect(() => {
+        async function fetchGroups() {
+            setLoadingGroups(true);
+            const { data: groups } = await supabase
+                .from("test_groups")
+                .select("*")
+                .eq("is_active", true)
+                .order("sort_order");
+            const { data: allQuestions } = await supabase
+                .from("questions")
+                .select("*")
+                .order("sort_order");
+
+            if (groups && allQuestions) {
+                const mapped: TestGroup[] = groups.map((g: { id: string; title: string; description: string; icon: string; duration_minutes: number }) => ({
+                    id: g.id,
+                    title: g.title,
+                    description: g.description,
+                    icon: g.icon,
+                    iconClass: ICON_CLASS_MAP[g.id] || "group-icon-marketing",
+                    durationMinutes: g.duration_minutes,
+                    questions: allQuestions
+                        .filter((q: { group_id: string }) => q.group_id === g.id)
+                        .map((q: { id: string; type: string; content: string; points: number; correct_answer: string; options: { id: string; content: string; is_correct: boolean }[] }) => ({
+                            id: q.id,
+                            type: q.type as QuestionDef["type"],
+                            content: q.content,
+                            points: q.points,
+                            correct_answer: q.type === "multiple_choice" ? (() => { try { return JSON.parse(q.correct_answer); } catch { return q.correct_answer; } })() : q.correct_answer,
+                            options: q.options || [],
+                        })),
+                }));
+                setTestGroups(mapped);
+            }
+            setLoadingGroups(false);
+        }
+        fetchGroups();
+    }, []);
 
     // Timer
     useEffect(() => {
@@ -628,8 +245,8 @@ export default function CandidateTestPage() {
                         </div>
                         <div className={styles["test-info-grid"]}>
                             <div className={styles["test-info-item"]}>
-                                <div className={styles["test-info-value"]}>3 bộ đề</div>
-                                <div className={styles["test-info-label"]}>Finance · SC Planning · SC Logistics</div>
+                                <div className={styles["test-info-value"]}>{loadingGroups ? "..." : `${testGroups.length} bộ đề`}</div>
+                                <div className={styles["test-info-label"]}>{testGroups.map(g => g.title).join(" · ") || "Đang tải..."}</div>
                             </div>
                             <div className={styles["test-info-item"]}>
                                 <div className={styles["test-info-value"]}>20–25 phút</div>
@@ -672,7 +289,7 @@ export default function CandidateTestPage() {
                         <p>Xin chào <strong>{candidateName}</strong>, hãy chọn bộ đề phù hợp với vị trí ứng tuyển</p>
                     </div>
                     <div className={styles["group-cards"]}>
-                        {TEST_GROUPS.map((g) => (
+                        {testGroups.map((g) => (
                             <div key={g.id} className={`card ${styles["group-card"]} ${selectedGroup?.id === g.id ? styles["group-card-selected"] : ""}`} onClick={() => setSelectedGroup(g)}>
                                 <div className={`${styles["group-card-icon"]} ${styles[g.iconClass]}`}>{g.icon}</div>
                                 <h3>{g.title}</h3>
@@ -698,9 +315,6 @@ export default function CandidateTestPage() {
             </div>
         );
     }
-
-
-
 
     // ==================== TEST ====================
     return (
