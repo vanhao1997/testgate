@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import styles from "./qeditor.module.css";
-import { NotePencil, PencilSimple, Trash, X, Plus } from "@phosphor-icons/react";
+import { NotePencil, PencilSimple, Trash, X, Plus, CaretDown, CaretRight } from "@phosphor-icons/react";
 
 interface TestGroup {
     id: string; title: string; description: string; icon: string;
@@ -31,6 +31,15 @@ export default function QuestionEditor() {
     const [editGroup, setEditGroup] = useState<TestGroup | null>(null);
     const [editQ, setEditQ] = useState<Question | null>(null);
     const [saving, setSaving] = useState(false);
+    const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+    const toggleGroup = (id: string) => {
+        setExpandedGroups(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+        });
+    };
 
     // New group form
     const [showNewGroup, setShowNewGroup] = useState(false);
@@ -136,71 +145,78 @@ export default function QuestionEditor() {
                 return (
                     <div key={g.id} className={styles.qeGroupCard}>
                         {/* Group header */}
-                        <div className={styles.qeGroupHeader}>
+                        <div className={styles.qeGroupHeader} onClick={() => editGroup?.id !== g.id && toggleGroup(g.id)} style={{ cursor: editGroup?.id === g.id ? 'default' : 'pointer' }}>
                             {editGroup?.id === g.id ? (
                                 <div className={styles.qeEditInline}>
-                                    <input value={editGroup.icon} onChange={e => setEditGroup({ ...editGroup, icon: e.target.value })} style={{ width: 50 }} />
-                                    <input value={editGroup.title} onChange={e => setEditGroup({ ...editGroup, title: e.target.value })} style={{ flex: 1 }} />
-                                    <input type="number" value={editGroup.duration_minutes} onChange={e => setEditGroup({ ...editGroup, duration_minutes: parseInt(e.target.value) || 25 })} style={{ width: 80 }} />
+                                    <input value={editGroup.icon} onChange={e => setEditGroup({ ...editGroup, icon: e.target.value })} style={{ width: 50 }} onClick={e => e.stopPropagation()} />
+                                    <input value={editGroup.title} onChange={e => setEditGroup({ ...editGroup, title: e.target.value })} style={{ flex: 1 }} onClick={e => e.stopPropagation()} />
+                                    <input type="number" value={editGroup.duration_minutes} onChange={e => setEditGroup({ ...editGroup, duration_minutes: parseInt(e.target.value) || 25 })} style={{ width: 80 }} onClick={e => e.stopPropagation()} />
                                     <span>phút</span>
-                                    <button className={styles.qeSaveBtn} disabled={saving} onClick={() => saveGroup(editGroup, false)}>Lưu</button>
-                                    <button className={styles.qeCancelBtn} onClick={() => setEditGroup(null)}>Hủy</button>
+                                    <button className={styles.qeSaveBtn} disabled={saving} onClick={(e) => { e.stopPropagation(); saveGroup(editGroup, false); }}>Lưu</button>
+                                    <button className={styles.qeCancelBtn} onClick={(e) => { e.stopPropagation(); setEditGroup(null); }}>Hủy</button>
                                 </div>
                             ) : (
                                 <>
                                     <div className={styles.qeGroupTitle}>
+                                        <span className={styles.qeGroupCaret}>
+                                            {expandedGroups.has(g.id) ? <CaretDown size={18} weight="bold" /> : <CaretRight size={18} weight="bold" />}
+                                        </span>
                                         <span className={styles.qeGroupIcon}>{g.icon}</span>
                                         <h4>{g.title}</h4>
                                         <span className={styles.qeGroupMeta}>{gqs.length} câu · {totalPts} điểm · {g.duration_minutes} phút</span>
                                         {!g.is_active && <span className={styles.qeBadgeInactive}>Ẩn</span>}
                                     </div>
                                     <div className={styles.qeGroupActions}>
-                                        <button onClick={() => setEditGroup({ ...g })} title="Sửa"><PencilSimple size={18} /></button>
-                                        <button onClick={() => deleteGroup(g.id)} title="Xóa"><Trash size={18} /></button>
+                                        <button onClick={(e) => { e.stopPropagation(); setEditGroup({ ...g }); }} title="Sửa"><PencilSimple size={18} /></button>
+                                        <button onClick={(e) => { e.stopPropagation(); deleteGroup(g.id); }} title="Xóa"><Trash size={18} /></button>
                                     </div>
                                 </>
                             )}
                         </div>
 
-                        {/* Questions list */}
-                        <div className={styles.qeQuestionList}>
-                            {gqs.map((q, idx) => (
-                                <div key={q.id} className={styles.qeQuestionItem}>
-                                    {editQ?.id === q.id ? (
-                                        <QuestionForm q={editQ} setQ={setEditQ as any} saving={saving}
-                                            onSave={() => saveQuestion(editQ, g.id, false)}
-                                            onCancel={() => setEditQ(null)}
-                                            addOption={addOption} removeOption={removeOption} updateOption={updateOption} />
-                                    ) : (
-                                        <div className={styles.qeQuestionRow}>
-                                            <span className={styles.qeQNum}>{idx + 1}</span>
-                                            <div className={styles.qeQContent}>
-                                                <span className={styles.qeQType}>{typeLabel(q.type)}</span>
-                                                <span className={styles.qeQText}>{q.content}</span>
-                                            </div>
-                                            <span className={styles.qeQPoints}>{q.points}đ</span>
-                                            <div className={styles.qeQActions}>
-                                                <button onClick={() => setEditQ({ ...q })} title="Sửa"><PencilSimple size={16} /></button>
-                                                <button onClick={() => deleteQuestion(q.id)} title="Xóa"><X size={16} /></button>
-                                            </div>
+                        {/* Questions list — collapsible */}
+                        {expandedGroups.has(g.id) && (
+                            <>
+                                <div className={styles.qeQuestionList}>
+                                    {gqs.map((q, idx) => (
+                                        <div key={q.id} className={styles.qeQuestionItem}>
+                                            {editQ?.id === q.id ? (
+                                                <QuestionForm q={editQ} setQ={setEditQ as any} saving={saving}
+                                                    onSave={() => saveQuestion(editQ, g.id, false)}
+                                                    onCancel={() => setEditQ(null)}
+                                                    addOption={addOption} removeOption={removeOption} updateOption={updateOption} />
+                                            ) : (
+                                                <div className={styles.qeQuestionRow}>
+                                                    <span className={styles.qeQNum}>{idx + 1}</span>
+                                                    <div className={styles.qeQContent}>
+                                                        <span className={styles.qeQType}>{typeLabel(q.type)}</span>
+                                                        <span className={styles.qeQText}>{q.content}</span>
+                                                    </div>
+                                                    <span className={styles.qeQPoints}>{q.points}đ</span>
+                                                    <div className={styles.qeQActions}>
+                                                        <button onClick={() => setEditQ({ ...q })} title="Sửa"><PencilSimple size={16} /></button>
+                                                        <button onClick={() => deleteQuestion(q.id)} title="Xóa"><X size={16} /></button>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
 
-                        {/* Add question */}
-                        {showNewQ && editGroup === null && (
-                            <div style={{ padding: "1rem" }}>
-                                <QuestionForm q={newQ as Question} setQ={setNewQ as any} saving={saving}
-                                    onSave={() => saveQuestion({ ...newQ, sort_order: gqs.length + 1 }, g.id, true)}
-                                    onCancel={() => setShowNewQ(false)}
-                                    addOption={addOption} removeOption={removeOption} updateOption={updateOption} />
-                            </div>
+                                {/* Add question */}
+                                {showNewQ && editGroup === null && (
+                                    <div style={{ padding: "1rem" }}>
+                                        <QuestionForm q={newQ as Question} setQ={setNewQ as any} saving={saving}
+                                            onSave={() => saveQuestion({ ...newQ, sort_order: gqs.length + 1 }, g.id, true)}
+                                            onCancel={() => setShowNewQ(false)}
+                                            addOption={addOption} removeOption={removeOption} updateOption={updateOption} />
+                                    </div>
+                                )}
+                                <button className={styles.qeAddQBtn} onClick={() => { setShowNewQ(true); setNewQ({ type: "single_choice", content: "", points: 10, correct_answer: "", options: [], sort_order: gqs.length + 1 }); }}>
+                                    <Plus size={14} weight="bold" /> Thêm câu hỏi
+                                </button>
+                            </>
                         )}
-                        <button className={styles.qeAddQBtn} onClick={() => { setShowNewQ(true); setNewQ({ type: "single_choice", content: "", points: 10, correct_answer: "", options: [], sort_order: gqs.length + 1 }); }}>
-                            <Plus size={14} weight="bold" /> Thêm câu hỏi
-                        </button>
                     </div>
                 );
             })}

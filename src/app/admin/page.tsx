@@ -5,7 +5,8 @@ import styles from "./admin.module.css";
 import * as XLSX from "xlsx";
 import { GroupPieChart, PassFailPieChart, ScoreDistributionChart, AvgByGroupChart, TimelineChart } from "./charts";
 import QuestionEditor from "./question-editor";
-import { ChartPie, ClipboardText, Gavel, NotePencil, DownloadSimple, X, CheckCircle, XCircle, ChartBar, Trophy, PencilSimple, Eye, EyeSlash } from "@phosphor-icons/react";
+import AdminGuide from "./admin-guide";
+import { ChartPie, ClipboardText, Gavel, NotePencil, DownloadSimple, X, CheckCircle, XCircle, ChartBar, Trophy, PencilSimple, Eye, EyeSlash, Info } from "@phosphor-icons/react";
 
 const ADMIN_PIN = "WFL2026";
 
@@ -48,7 +49,7 @@ export default function AdminPage() {
     const [pin, setPin] = useState("");
     const [pinError, setPinError] = useState("");
     const [showPin, setShowPin] = useState(false);
-    const [activeTab, setActiveTab] = useState<"dashboard" | "submissions" | "judges" | "questions">("dashboard");
+    const [activeTab, setActiveTab] = useState<"dashboard" | "submissions" | "judges" | "questions" | "guide">("dashboard");
 
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [judges, setJudges] = useState<Judge[]>([]);
@@ -245,6 +246,7 @@ export default function AdminPage() {
                 <button className={`${styles.tab} ${activeTab === "submissions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("submissions")}><ClipboardText size={18} /> Bài nộp</button>
                 <button className={`${styles.tab} ${activeTab === "judges" ? styles.tabActive : ""}`} onClick={() => setActiveTab("judges")}><Gavel size={18} /> Giám khảo</button>
                 <button className={`${styles.tab} ${activeTab === "questions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("questions")}><NotePencil size={18} /> Bộ đề</button>
+                <button className={`${styles.tab} ${activeTab === "guide" ? styles.tabActive : ""}`} onClick={() => setActiveTab("guide")}><Info size={18} /> Hướng dẫn</button>
             </div>
 
             <div className={styles.content}>
@@ -408,6 +410,7 @@ export default function AdminPage() {
 
                         {/* ====== QUESTIONS ====== */}
                         {activeTab === "questions" && <QuestionEditor />}
+                        {activeTab === "guide" && <AdminGuide />}
                     </>
                 )}
             </div>

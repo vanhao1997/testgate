@@ -131,6 +131,19 @@
     padding: 1rem 1.25rem;
     background: var(--color-bg-secondary);
     border-bottom: 1px solid var(--color-bg-tertiary);
+    transition: background 0.15s;
+    user-select: none;
+}
+
+.qeGroupHeader:hover {
+    background: #f0f0f0;
+}
+
+.qeGroupCaret {
+    display: flex;
+    align-items: center;
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
 }
 
 .qeGroupTitle {
