@@ -846,31 +846,160 @@
 }
 
 @media (max-width: 768px) {
-    .content {
-        padding: 1rem;
+    .adminNav {
+        padding: 0.5rem 0.75rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
 
-    .statsGrid {
-        grid-template-columns: 1fr 1fr;
+    .adminNavLeft {
+        gap: 0.5rem;
     }
 
-    .chartsRow {
-        grid-template-columns: 1fr;
+    .adminNavLeft img {
+        height: 26px;
+    }
+
+    .adminNavLeft h1 {
+        font-size: 0.9rem;
+    }
+
+    .adminNavLeft span {
+        font-size: 0.7rem;
+    }
+
+    .adminNavRight {
+        gap: 0.4rem;
+    }
+
+    .adminNavRight button {
+        padding: 4px 10px;
+        font-size: 0.72rem;
+    }
+
+    .exportBtn {
+        padding: 4px 12px;
+        font-size: 0.72rem;
     }
 
     .tabs {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0 0.5rem;
+        gap: 0;
     }
 
-    .adminNav {
-        padding: 0.5rem 1rem;
+    .tab {
+        padding: 0.65rem 0.75rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .content {
+        padding: 0.75rem;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .chartsRow {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    /* Toolbar – stack vertically */
+    .submissionHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .submissionHeader h2 {
+        font-size: 0.95rem;
+    }
+
+    .subToolbar {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .subToolbar input,
+    .subToolbar select {
+        width: 100%;
+        font-size: 0.82rem;
+    }
+
+    /* Data table – scroll horizontally */
+    .dataTable {
+        font-size: 0.72rem;
+    }
+
+    .dataTable th,
+    .dataTable td {
+        padding: 0.5rem 0.6rem;
+    }
+
+    /* Detail panel */
+    .detailOverlay {
+        padding: 0;
     }
 
     .detailPanel {
         width: 100vw;
+        max-height: 100vh;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .detailHeader {
+        padding: 0.75rem 1rem;
+    }
+
+    .detailBody {
+        padding: 0.75rem 1rem;
     }
 
     .candidateInfo {
         grid-template-columns: 1fr;
+        gap: 0.3rem;
+    }
+
+    .scoreInputGroup {
+        flex-direction: column;
+    }
+
+    .scoreForm h3 {
+        font-size: 0.95rem;
+    }
+
+    /* Login */
+    .loginCard {
+        margin: 0 1rem;
+        padding: 1.5rem;
+    }
+
+    .loginCard h1 {
+        font-size: 1.2rem;
+    }
+
+    .loginInput {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .loginBtn {
+        padding: 0.65rem;
+        font-size: 0.9rem;
+    }
+
+    /* Judge management section */
+    .judgeList {
+        gap: 0.5rem;
+    }
+
+    .judgeCard {
+        padding: 0.75rem;
     }
 }

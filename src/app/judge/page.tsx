@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import styles from "./judge.module.css";
-import { ClipboardText, NotePencil, X, ChatText, Star, FloppyDisk, CheckCircle, Warning } from "@phosphor-icons/react";
+import { ClipboardText, NotePencil, X, ChatText, Star, FloppyDisk, CheckCircle, Warning, Funnel, SortAscending } from "@phosphor-icons/react";
 
 /* ====== Types ====== */
 interface AnswerDetail {
@@ -67,9 +67,13 @@ export default function JudgePage() {
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Filters
     const [filterGroup, setFilterGroup] = useState("all");
     const [searchText, setSearchText] = useState("");
+    const [filterStatus, setFilterStatus] = useState<"all" | "graded" | "ungraded">("all");
+    const [sortBy, setSortBy] = useState<"time" | "score_asc" | "score_desc" | "name">("time");
+
+    // All scores for grading status
+    const [allScores, setAllScores] = useState<JudgeScore[]>([]);
 
     // Detail
     const [selectedSub, setSelectedSub] = useState<Submission | null>(null);
@@ -105,9 +109,21 @@ export default function JudgePage() {
         setLoading(false);
     }, []);
 
+    const loadAllScores = useCallback(async () => {
+        if (!judge) return;
+        const { data } = await supabase.from("judge_scores").select("*").eq("judge_id", judge.id);
+        if (data) setAllScores(data as JudgeScore[]);
+    }, [judge]);
+
     useEffect(() => {
-        if (judge) loadSubmissions();
-    }, [judge, loadSubmissions]);
+        if (judge) { loadSubmissions(); loadAllScores(); }
+    }, [judge, loadSubmissions, loadAllScores]);
+
+    // Graded status helpers
+    const gradedIds = new Set(allScores.map(s => s.result_id));
+    const isGraded = (id: string) => gradedIds.has(id);
+    const gradedCount = submissions.filter(s => isGraded(s.id)).length;
+    const ungradedCount = submissions.length - gradedCount;
 
     // Load scores for selected submission
     useEffect(() => {
@@ -162,6 +178,7 @@ export default function JudgePage() {
         if (data) setSubScores(data as JudgeScore[]);
         setSaving(false);
         setSaveMsg("Đã lưu điểm thành công!");
+        loadAllScores();
         setTimeout(() => setSaveMsg(""), 3000);
     };
 
@@ -174,6 +191,21 @@ export default function JudgePage() {
                 !(s.candidate_id || "").toLowerCase().includes(q)) return false;
         }
         return true;
+    });
+
+    // Apply status filter
+    const statusFiltered = filtered.filter(s => {
+        if (filterStatus === "graded") return isGraded(s.id);
+        if (filterStatus === "ungraded") return !isGraded(s.id);
+        return true;
+    });
+
+    // Apply sort
+    const sorted = [...statusFiltered].sort((a, b) => {
+        if (sortBy === "score_asc") return a.percentage - b.percentage;
+        if (sortBy === "score_desc") return b.percentage - a.percentage;
+        if (sortBy === "name") return a.candidate_name.localeCompare(b.candidate_name);
+        return new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime();
     });
 
     /* ====== LOGIN ====== */
@@ -222,6 +254,14 @@ export default function JudgePage() {
                         <span className={styles.statNum}>{submissions.length}</span>
                         <span className={styles.statLabel}>Tổng bài</span>
                     </div>
+                    <div className={`${styles.stat} ${styles.statGraded}`}>
+                        <span className={styles.statNum}>{gradedCount}</span>
+                        <span className={styles.statLabel}>Đã chấm</span>
+                    </div>
+                    <div className={`${styles.stat} ${styles.statUngraded}`}>
+                        <span className={styles.statNum}>{ungradedCount}</span>
+                        <span className={styles.statLabel}>Chưa chấm</span>
+                    </div>
                     <div className={styles.stat}>
                         <span className={styles.statNum}>{submissions.filter(s => s.test_group === "finance").length}</span>
                         <span className={styles.statLabel}>Finance</span>
@@ -230,14 +270,10 @@ export default function JudgePage() {
                         <span className={styles.statNum}>{submissions.filter(s => s.test_group === "sc-planning").length}</span>
                         <span className={styles.statLabel}>SC Planning</span>
                     </div>
-                    <div className={styles.stat}>
-                        <span className={styles.statNum}>{submissions.filter(s => s.test_group === "sc-logistics").length}</span>
-                        <span className={styles.statLabel}>SC Logistics</span>
-                    </div>
                 </div>
 
                 <div className={styles.toolbar}>
-                    <h2>Danh sách bài nộp ({filtered.length})</h2>
+                    <h2>Danh sách bài nộp ({sorted.length})</h2>
                     <div className={styles.filters}>
                         <input className={styles.searchInput} placeholder="Tìm tên hoặc SBD..." value={searchText} onChange={e => setSearchText(e.target.value)} />
                         <select className={styles.filterSelect} value={filterGroup} onChange={e => setFilterGroup(e.target.value)}>
@@ -246,16 +282,27 @@ export default function JudgePage() {
                             <option value="sc-planning">SC Planning</option>
                             <option value="sc-logistics">SC Logistics</option>
                         </select>
+                        <select className={styles.filterSelect} value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)}>
+                            <option value="all">Tất cả trạng thái</option>
+                            <option value="graded">Đã chấm</option>
+                            <option value="ungraded">Chưa chấm</option>
+                        </select>
+                        <select className={styles.filterSelect} value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
+                            <option value="time">Mới nhất</option>
+                            <option value="score_desc">Điểm cao → thấp</option>
+                            <option value="score_asc">Điểm thấp → cao</option>
+                            <option value="name">Tên A-Z</option>
+                        </select>
                     </div>
                 </div>
 
                 {loading ? (
                     <div className={styles.empty}>Đang tải...</div>
-                ) : filtered.length === 0 ? (
+                ) : sorted.length === 0 ? (
                     <div className={styles.empty}>Không có bài nộp nào</div>
                 ) : (
                     <div className={styles.subGrid}>
-                        {filtered.map(s => (
+                        {sorted.map(s => (
                             <div key={s.id} className={styles.subCard} onClick={() => { setSelectedSub(s); setPerQScores({}); setMyNotes(""); setSaveMsg(""); }}>
                                 <div className={styles.subCardTop}>
                                     <div className={styles.subAvatar}>{s.candidate_name.charAt(0).toUpperCase()}</div>
@@ -263,9 +310,16 @@ export default function JudgePage() {
                                         <h3>{s.candidate_name}</h3>
                                         <p>{s.candidate_id || "Chưa có SBD"}</p>
                                     </div>
-                                    <span className={`${styles.groupTag} ${styles["group_" + s.test_group.replace("-", "_")]}`}>
-                                        {groupLabel(s.test_group)}
-                                    </span>
+                                    <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                                        <span className={`${styles.groupTag} ${styles["group_" + s.test_group.replace("-", "_")]}`}>
+                                            {groupLabel(s.test_group)}
+                                        </span>
+                                        {isGraded(s.id) ? (
+                                            <span className={styles.gradedBadge}><CheckCircle size={12} weight="fill" /> Đã chấm</span>
+                                        ) : (
+                                            <span className={styles.ungradedBadge}>Chưa chấm</span>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className={styles.subCardBody}>
                                     <div className={styles.subScore}>

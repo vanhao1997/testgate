@@ -227,6 +227,35 @@
     color: #065f46;
 }
 
+.gradedBadge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    background: #d1fae5;
+    color: #065f46;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.ungradedBadge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.statGraded .statNum {
+    color: #065f46;
+}
+
+.statUngraded .statNum {
+    color: #dc2626;
+}
+
 .subCardBody {
     display: flex;
     align-items: center;
@@ -767,35 +796,169 @@
 }
 
 @media (max-width: 768px) {
+    .nav {
+        padding: 0.5rem 0.75rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .navLeft {
+        gap: 0.5rem;
+    }
+
+    .navLeft img {
+        height: 28px;
+    }
+
+    .navLeft h1 {
+        font-size: 0.9rem;
+    }
+
+    .navLeft span {
+        font-size: 0.7rem;
+    }
+
+    .navRight {
+        gap: 0.5rem;
+    }
+
+    .navRight button {
+        padding: 4px 10px;
+        font-size: 0.75rem;
+    }
+
+    .roleBadge {
+        font-size: 0.65rem;
+        padding: 3px 8px;
+    }
+
     .content {
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
     .statsRow {
         flex-wrap: wrap;
+        gap: 0.5rem;
     }
 
     .stat {
-        flex: 0 0 calc(50% - 0.5rem);
+        flex: 0 0 calc(33.33% - 0.5rem);
+        padding: 0.6rem 0.5rem;
+    }
+
+    .statNum {
+        font-size: 1.1rem;
+    }
+
+    .statLabel {
+        font-size: 0.6rem;
+    }
+
+    .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .toolbar h2 {
+        font-size: 0.95rem;
+    }
+
+    .filters {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .searchInput,
+    .filterSelect {
+        width: 100%;
+        font-size: 0.82rem;
     }
 
     .subGrid {
         grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .subCard {
+        padding: 0.75rem;
+    }
+
+    .subCardTop {
+        gap: 0.5rem;
+    }
+
+    .subAvatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+
+    .subCardTop h3 {
+        font-size: 0.85rem;
+    }
+
+    .gradeBtn {
+        padding: 0.4rem 0;
+        font-size: 0.8rem;
+    }
+
+    /* Panel */
+    .panelOverlay {
+        padding: 0;
     }
 
     .panel {
         width: 100vw;
+        max-height: 100vh;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .panelHeader {
+        padding: 0.75rem 1rem;
+    }
+
+    .panelBody {
+        padding: 0.75rem 1rem;
     }
 
     .infoGrid {
         grid-template-columns: 1fr;
+        gap: 0.3rem;
     }
 
     .scoreRow {
         flex-direction: column;
+        gap: 0.5rem;
     }
 
-    .nav {
-        padding: 0.5rem 1rem;
+    .scoreInput {
+        width: 100%;
+    }
+
+    .scoreSave {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Login */
+    .loginCard {
+        margin: 0 1rem;
+        padding: 1.5rem;
+    }
+
+    .loginCard h1 {
+        font-size: 1.2rem;
+    }
+
+    .loginInput {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .loginBtn {
+        padding: 0.65rem;
+        font-size: 0.9rem;
     }
 }
