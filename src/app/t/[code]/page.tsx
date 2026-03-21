@@ -532,6 +532,20 @@ export default function CandidateTestPage() {
         const pct = totalPoints > 0 ? Math.round((totalScore / totalPoints) * 100) : 0;
         const passed = pct >= 70;
 
+        // Collect all answers with question text for judges
+        const allAnswers = selectedGroup.questions.map((q) => {
+            const ans = answers[q.id];
+            let answerText = "";
+            if (Array.isArray(ans)) {
+                answerText = ans.join(", ");
+            } else if (ans) {
+                answerText = String(ans);
+            } else {
+                answerText = "(Chưa trả lời)";
+            }
+            return { question: q.content, answer: answerText };
+        });
+
         // Save to Supabase + Google Sheets (score is saved for judges, NOT shown to candidate)
         const resultPayload = {
             candidate_name: candidateName,
@@ -547,7 +561,7 @@ export default function CandidateTestPage() {
         try {
             await Promise.all([
                 supabase.from("test_results").insert({ ...resultPayload, answers: details }),
-                sendToGoogleSheet(resultPayload),
+                sendToGoogleSheet({ ...resultPayload, all_answers: allAnswers }),
             ]);
         } catch (e) {
             console.error("Failed to save:", e);

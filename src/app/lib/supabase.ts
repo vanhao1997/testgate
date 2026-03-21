@@ -6,9 +6,7 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // ====== GOOGLE SHEETS ======
-// Paste URL webhook từ Google Apps Script vào đây:
-export const GOOGLE_SHEET_WEBHOOK = '';
-// Ví dụ: 'https://script.google.com/macros/s/AKfycbx.../exec'
+export const GOOGLE_SHEET_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwPRxcRZ4phFMpByHSqmwCm4CXOIR0KkM6fRQMwHfmmCRBqjuwzIQotn6s9E87Q8zV_/exec';
 
 export interface TestResult {
     id?: string;
@@ -27,9 +25,20 @@ export interface TestResult {
 }
 
 /**
- * Gửi kết quả lên Google Sheets (nếu đã cấu hình webhook)
+ * Gửi kết quả + toàn bộ câu trả lời lên Google Sheets
  */
-export async function sendToGoogleSheet(data: Omit<TestResult, 'id' | 'answers' | 'submitted_at' | 'created_at'>) {
+export async function sendToGoogleSheet(data: {
+    candidate_id: string;
+    candidate_name: string;
+    candidate_email: string;
+    candidate_phone: string;
+    test_group: string;
+    score: number;
+    total_points: number;
+    percentage: number;
+    passed: boolean;
+    all_answers: { question: string; answer: string }[];
+}) {
     if (!GOOGLE_SHEET_WEBHOOK) return;
     try {
         await fetch(GOOGLE_SHEET_WEBHOOK, {
