@@ -15,6 +15,7 @@ export interface TestResult {
     candidate_name: string;
     candidate_email: string;
     candidate_phone: string;
+    candidate_id: string;
     test_group: string;
     score: number;
     total_points: number;

@@ -503,6 +503,7 @@ export default function CandidateTestPage() {
     const [candidateName, setCandidateName] = useState("");
     const [candidateEmail, setCandidateEmail] = useState("");
     const [candidatePhone, setCandidatePhone] = useState("");
+    const [candidateId, setCandidateId] = useState("");
     const [selectedGroup, setSelectedGroup] = useState<TestGroup | null>(null);
     const [answers, setAnswers] = useState<AnswerMap>({});
     const [timeLeft, setTimeLeft] = useState(0);
@@ -536,6 +537,7 @@ export default function CandidateTestPage() {
             candidate_name: candidateName,
             candidate_email: candidateEmail,
             candidate_phone: candidatePhone,
+            candidate_id: candidateId,
             test_group: selectedGroup.id,
             score: totalScore,
             total_points: totalPoints,
@@ -553,7 +555,7 @@ export default function CandidateTestPage() {
 
         setSaving(false);
         setShowThankYou(true);
-    }, [selectedGroup, answers, candidateName, candidateEmail, candidatePhone, saving]);
+    }, [selectedGroup, answers, candidateName, candidateEmail, candidatePhone, candidateId, saving]);
 
     useEffect(() => {
         if (phase === "test" && timeLeft === 0 && totalTime > 0) handleSubmit();
@@ -589,7 +591,7 @@ export default function CandidateTestPage() {
     if (phase === "entry") {
         const handleEntry = (e: FormEvent) => {
             e.preventDefault();
-            if (candidateName && candidateEmail) setPhase("group");
+            if (candidateName && candidateEmail && candidateId) setPhase("group");
         };
         return (
             <div className={styles["test-page"]}>
@@ -622,6 +624,10 @@ export default function CandidateTestPage() {
                             <div className="form-group">
                                 <label className="form-label">Số điện thoại</label>
                                 <input className="form-input" placeholder="0901234567" value={candidatePhone} onChange={(e) => setCandidatePhone(e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Số báo danh *</label>
+                                <input className="form-input" placeholder="Nhập số báo danh" value={candidateId} onChange={(e) => setCandidateId(e.target.value)} required />
                             </div>
                             <button type="submit" className="btn btn-primary btn-lg" style={{ width: "100%" }}>Tiếp tục chọn bộ đề →</button>
                         </form>
