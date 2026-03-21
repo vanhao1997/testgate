@@ -1,0 +1,717 @@
+/* ========================================
+   Judge Grading Page — Wilmar WFL
+   ======================================== */
+
+.judgePage {
+    min-height: 100vh;
+    background: #f5f7fa;
+    font-family: var(--font-body);
+}
+
+/* === Nav === */
+.nav {
+    background: linear-gradient(135deg, #005951, #007a6f);
+    color: white;
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0, 89, 81, 0.25);
+}
+
+.navLeft {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.navLeft img {
+    height: 36px;
+}
+
+.navLeft h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.navLeft span {
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+.navRight {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.navRight button {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.navRight button:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.roleBadge {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: rgba(253, 221, 41, 0.3);
+    color: #FDDD29;
+    font-weight: 600;
+}
+
+/* === Content === */
+.content {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+}
+
+/* === Stats row === */
+.statsRow {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eef1f5;
+}
+
+.statNum {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #005951;
+}
+
+.statLabel {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* === Toolbar === */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.toolbar h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.filters {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.searchInput,
+.filterSelect {
+    padding: 8px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: white;
+}
+
+.searchInput {
+    width: 220px;
+}
+
+/* === Submissions Grid === */
+.subGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+.subCard {
+    background: white;
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eef1f5;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.subCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 89, 81, 0.12);
+    border-color: #005951;
+}
+
+.subCardTop {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.subAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #005951, #007a6f);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.subCardTop h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1a1a2e;
+}
+
+.subCardTop p {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.groupTag {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.group_finance {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.group_sc_planning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.group_sc_logistics {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.subCardBody {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.subScore {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.subScoreNum {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.subScorePct {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.statusBadge {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.statusPass {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.statusFail {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.subCardTime {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-bottom: 0.75rem;
+}
+
+.gradeBtn {
+    width: 100%;
+    padding: 8px;
+    background: #005951;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.gradeBtn:hover {
+    background: #004a43;
+}
+
+/* === Empty === */
+.empty {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* === Detail Panel === */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 200;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.panel {
+    width: 720px;
+    max-width: 92vw;
+    background: white;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: -6px 0 28px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.25s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.panelHeader {
+    padding: 1.25rem;
+    border-bottom: 1px solid #eef1f5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.panelHeader h2 {
+    font-size: 1.05rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #64748b;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.closeBtn:hover {
+    background: #f1f5f9;
+}
+
+.panelBody {
+    padding: 1.25rem;
+}
+
+/* Info grid */
+.infoGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.infoGrid label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #94a3b8;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.infoGrid span {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+/* Answers */
+.sectionTitle {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 1.5rem 0 0.75rem 0;
+}
+
+.answersList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.answerItem {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: white;
+}
+
+.answerCorrect {
+    border-left: 3px solid #16a34a;
+}
+
+.answerWrong {
+    border-left: 3px solid #ef4444;
+}
+
+.answerQ {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.qNum {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #005951;
+    background: rgba(0, 89, 81, 0.08);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.qType {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.qContent {
+    font-size: 0.88rem;
+    color: #334155;
+    margin: 0.25rem 0;
+    line-height: 1.4;
+}
+
+.answerResult {
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.noAnswer {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+/* Score section */
+.scoreSection {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: rgba(0, 89, 81, 0.04);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 89, 81, 0.12);
+}
+
+.scoreRow {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.scoreField {
+    flex: 1;
+}
+
+.scoreField label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 4px;
+}
+
+.scoreField input,
+.scoreField textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(0, 89, 81, 0.2);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: white;
+    transition: border-color 0.2s;
+}
+
+.scoreField input:focus,
+.scoreField textarea:focus {
+    outline: none;
+    border-color: #005951;
+}
+
+.scoreField textarea {
+    resize: vertical;
+    min-height: 50px;
+}
+
+.scoreActions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.saveBtn {
+    padding: 10px 24px;
+    background: #005951;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.saveBtn:hover {
+    background: #004a43;
+}
+
+.saveBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.saveMsg {
+    font-size: 0.85rem;
+    color: #16a34a;
+    font-weight: 600;
+}
+
+/* All scores */
+.allScores {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(0, 89, 81, 0.2);
+}
+
+.allScores h4 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.scoreItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.85rem;
+}
+
+.scoreItem:last-child {
+    border-bottom: none;
+}
+
+.youBadge {
+    font-size: 0.65rem;
+    background: #005951;
+    color: white;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+    font-weight: 600;
+}
+
+.scoreItemRight {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.scoreNum {
+    font-weight: 700;
+    color: #005951;
+}
+
+.scoreNote {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* === Login === */
+.loginPage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #ecfdf5 100%);
+}
+
+.loginCard {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 89, 81, 0.1);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.loginCard img {
+    height: 52px;
+    margin-bottom: 1rem;
+}
+
+.loginCard h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #005951;
+    margin: 0 0 0.25rem 0;
+}
+
+.loginCard p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0 0 1.5rem 0;
+}
+
+.loginInput {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+}
+
+.loginInput:focus {
+    outline: none;
+    border-color: #005951;
+}
+
+.loginBtn {
+    width: 100%;
+    padding: 12px;
+    background: #005951;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.loginBtn:hover {
+    background: #004a43;
+}
+
+.loginError {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: 1rem;
+    }
+
+    .statsRow {
+        flex-wrap: wrap;
+    }
+
+    .stat {
+        flex: 0 0 calc(50% - 0.5rem);
+    }
+
+    .subGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        width: 100vw;
+    }
+
+    .infoGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .scoreRow {
+        flex-direction: column;
+    }
+
+    .nav {
+        padding: 0.5rem 1rem;
+    }
+}
