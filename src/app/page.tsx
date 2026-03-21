@@ -1,158 +1,117 @@
+"use client";
+
 import Link from "next/link";
+import { ThemeToggle } from "./components/ThemeToggle";
 import styles from "./page.module.css";
 
-export default function LandingPage() {
+export default function HomePage() {
   return (
-    <>
-      {/* Navigation */}
-      <nav className={styles["landing-nav"]}>
-        <div className="container">
-          <Link href="/" className={styles["logo"]}>
-            <span className={styles["logo-icon"]}>⚡</span>
-            <span className={styles["logo-text"]}>TestGate</span>
+    <div className={styles.page}>
+      {/* Corporate Nav */}
+      <nav className={styles.nav}>
+        <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Link href="/" className={styles.logo}>
+            <img
+              src="/wfl-logo.png"
+              alt="W-Future Leader"
+              className={styles.logoImg}
+            />
           </Link>
-          <div className={styles["nav-links"]}>
-            <a href="#features">Tính năng</a>
-            <a href="#how-it-works">Cách hoạt động</a>
-            <Link href="/login" className="btn btn-secondary">Đăng nhập</Link>
-            <Link href="/register" className="btn btn-primary">Dùng thử miễn phí</Link>
+          <div className={styles.navRight}>
+            <span className={styles.navLabel}>W-Future Leader</span>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className={styles["hero"]}>
-        <div className={`${styles["hero-bg-orb"]} ${styles["hero-bg-orb-1"]}`}></div>
-        <div className={`${styles["hero-bg-orb"]} ${styles["hero-bg-orb-2"]}`}></div>
-        <div className={styles["hero-content"]}>
-          <div className={styles["hero-badge"]}>🚀 Nền tảng #1 cho sàng lọc ứng viên</div>
-          <h1>
-            Tìm đúng người,
-            <br />
-            <span className={styles["gradient-text"]}>nhanh hơn 10 lần</span>
+      {/* Hero */}
+      <section className={styles.hero}>
+        <div className={styles.heroOverlay} />
+        <div className={styles.heroContent}>
+          <span className={styles.heroBadge}>Season 2 — 2026</span>
+          <h1 className={styles.heroTitle}>
+            W-Future Leader<br />Production Trainee
           </h1>
-          <p className={styles["hero-desc"]}>
-            Tạo bài test chuyên môn trong 5 phút. Gửi link cho ứng viên.
-            Hệ thống tự chấm điểm và xếp hạng. Chỉ gặp những người xứng đáng nhất.
+          <div className={styles.heroBar} />
+          <p className={styles.heroSubtitle}>
+            Chương trình đào tạo nhà quản lý khối sản xuất tương lai<br />
+            dành cho TOP ứng viên tài năng nhất — Wilmar CLV.
           </p>
-          <div className={styles["hero-actions"]}>
-            <Link href="/register" className="btn btn-primary btn-lg">
-              Bắt đầu miễn phí →
-            </Link>
-            <Link href="#how-it-works" className="btn btn-secondary btn-lg">
-              Xem demo
+          <div className={styles.heroActions}>
+            <Link href="/t/FE2026A" className={`btn btn-accent btn-lg ${styles.heroBtn}`}>
+              Bắt đầu làm bài
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
             </Link>
           </div>
-          <div className={styles["hero-stats"]}>
-            <div className={styles["hero-stat"]}>
-              <div className={styles["number"]}>10K+</div>
-              <div className={styles["label"]}>Bài test đã tạo</div>
+        </div>
+      </section>
+
+      {/* Program Info */}
+      <section className={styles.infoSection}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Lộ trình đào tạo</h2>
+            <div className="gold-bar" style={{ margin: "0 auto" }} />
+          </div>
+          <div className={styles.infoGrid}>
+            <div className={`card stagger ${styles.infoCard}`}>
+              <div className={styles.infoStep}>1</div>
+              <div className={styles.infoValue}>Trải nghiệm đa dạng</div>
+              <div className={styles.infoLabel}>Luân chuyển qua Tinh chế, Đóng gói, QC, Lab, R&D, Kho hàng...</div>
             </div>
-            <div className={styles["hero-stat"]}>
-              <div className={styles["number"]}>50K+</div>
-              <div className={styles["label"]}>Ứng viên đã làm bài</div>
+            <div className={`card stagger ${styles.infoCard}`}>
+              <div className={styles.infoStep}>2</div>
+              <div className={styles.infoValue}>Đương đầu thử thách</div>
+              <div className={styles.infoLabel}>Thực chiến với sự hướng dẫn từ đồng nghiệp dày dặn kinh nghiệm</div>
             </div>
-            <div className={styles["hero-stat"]}>
-              <div className={styles["number"]}>85%</div>
-              <div className={styles["label"]}>Tiết kiệm thời gian</div>
+            <div className={`card stagger ${styles.infoCard}`}>
+              <div className={styles.infoStep}>3</div>
+              <div className={styles.infoValue}>Về đích rực rỡ</div>
+              <div className={styles.infoLabel}>Trở thành "chiến binh" Wilmar CLV thực thụ</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className={styles["features"]}>
+      {/* Test Info */}
+      <section style={{ padding: "var(--space-3xl) 0", background: "var(--color-bg-primary)" }}>
         <div className="container">
-          <div className={styles["section-header"]}>
-            <h2>Tại sao chọn TestGate?</h2>
-            <p>Giải pháp toàn diện giúp quy trình tuyển dụng của bạn chuyên nghiệp và hiệu quả hơn</p>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Về bài test</h2>
+            <div className="gold-bar" style={{ margin: "0 auto" }} />
           </div>
-          <div className={styles["features-grid"]}>
-            <div className={`card card-highlight ${styles["feature-card"]}`}>
-              <div className={`${styles["feature-icon"]} ${styles["feature-icon-primary"]}`}>📝</div>
-              <h3>Tạo test đa dạng</h3>
-              <p>Hỗ trợ trắc nghiệm, đúng/sai, tự luận ngắn. Dễ dàng tạo bài test chuyên môn cho mọi vị trí tuyển dụng.</p>
+          <div className={styles.infoGrid}>
+            <div className={`card stagger ${styles.infoCard}`}>
+              <div className={styles.infoIcon}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" /><path d="M14 2v6h6" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M10 9H8" /></svg>
+              </div>
+              <div className={styles.infoValue}>3 bộ đề</div>
+              <div className={styles.infoLabel}>Marketing · Sales · Kỹ thuật</div>
             </div>
-            <div className={`card card-highlight ${styles["feature-card"]}`}>
-              <div className={`${styles["feature-icon"]} ${styles["feature-icon-accent"]}`}>⚡</div>
-              <h3>Tự động chấm điểm</h3>
-              <p>Hệ thống chấm điểm tự động ngay khi ứng viên nộp bài. Tiết kiệm hàng giờ đánh giá thủ công.</p>
+            <div className={`card stagger ${styles.infoCard}`}>
+              <div className={styles.infoIcon}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+              </div>
+              <div className={styles.infoValue}>20–25 phút</div>
+              <div className={styles.infoLabel}>Thời gian mỗi bộ</div>
             </div>
-            <div className={`card card-highlight ${styles["feature-card"]}`}>
-              <div className={`${styles["feature-icon"]} ${styles["feature-icon-warning"]}`}>📊</div>
-              <h3>Xếp hạng thông minh</h3>
-              <p>Bảng xếp hạng trực quan, lọc theo điểm, export Excel/CSV. So sánh ứng viên một cách công bằng.</p>
+            <div className={`card stagger ${styles.infoCard}`}>
+              <div className={styles.infoIcon}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+              </div>
+              <div className={styles.infoValue}>Ban giám khảo</div>
+              <div className={styles.infoLabel}>Kết quả được gửi sau bởi ban giám khảo</div>
             </div>
-            <div className={`card card-highlight ${styles["feature-card"]}`}>
-              <div className={`${styles["feature-icon"]} ${styles["feature-icon-primary"]}`}>🔗</div>
-              <h3>Chia sẻ dễ dàng</h3>
-              <p>Tạo link mời duy nhất cho mỗi bài test. Ứng viên không cần tạo tài khoản, chỉ cần nhấp link là làm bài.</p>
-            </div>
-            <div className={`card card-highlight ${styles["feature-card"]}`}>
-              <div className={`${styles["feature-icon"]} ${styles["feature-icon-accent"]}`}>🛡️</div>
-              <h3>Bảo mật & chống gian lận</h3>
-              <p>Giới hạn thời gian, chống copy, theo dõi hành vi làm bài. Đảm bảo kết quả trung thực.</p>
-            </div>
-            <div className={`card card-highlight ${styles["feature-card"]}`}>
-              <div className={`${styles["feature-icon"]} ${styles["feature-icon-warning"]}`}>📧</div>
-              <h3>Thông báo tự động</h3>
-              <p>Gửi email kết quả tự động cho ứng viên. Thông báo real-time khi có bài nộp mới.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section id="how-it-works" className={styles["how-it-works"]}>
-        <div className="container">
-          <div className={styles["section-header"]}>
-            <h2>Hoạt động như thế nào?</h2>
-            <p>Chỉ 4 bước đơn giản để bắt đầu sàng lọc ứng viên</p>
-          </div>
-          <div className={styles["steps-grid"]}>
-            <div className={`card ${styles["step-card"]}`}>
-              <div className={styles["step-number"]}>1</div>
-              <h3>Tạo chiến dịch</h3>
-              <p>Tạo chiến dịch tuyển dụng với thông tin vị trí, mô tả công việc.</p>
-            </div>
-            <div className={`card ${styles["step-card"]}`}>
-              <div className={styles["step-number"]}>2</div>
-              <h3>Soạn bài test</h3>
-              <p>Thêm câu hỏi trắc nghiệm, tự luận, đúng/sai. Cài đặt thời gian và điểm đạt.</p>
-            </div>
-            <div className={`card ${styles["step-card"]}`}>
-              <div className={styles["step-number"]}>3</div>
-              <h3>Gửi link</h3>
-              <p>Chia sẻ link mời cho ứng viên qua email, tin nhắn hoặc job post.</p>
-            </div>
-            <div className={`card ${styles["step-card"]}`}>
-              <div className={styles["step-number"]}>4</div>
-              <h3>Xem kết quả</h3>
-              <p>Hệ thống tự chấm điểm. Xem bảng xếp hạng và chọn ứng viên tốt nhất.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className={styles["cta-section"]}>
-        <div className="container">
-          <div className={styles["cta-box"]}>
-            <h2>Sẵn sàng tìm ứng viên xuất sắc?</h2>
-            <p>Đăng ký miễn phí và tạo bài test đầu tiên trong 5 phút</p>
-            <Link href="/register" className="btn btn-lg" style={{ background: "#fff", color: "#6366f1", fontWeight: 700 }}>
-              Bắt đầu ngay →
-            </Link>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className={styles["landing-footer"]}>
+      <footer className={styles.footer}>
         <div className="container">
-          <p>© 2026 TestGate. Nền tảng sàng lọc ứng viên thông minh.</p>
+          <p>&copy; 2026 Wilmar CLV · W-Future Leader Production Trainee Season 2</p>
         </div>
       </footer>
-    </>
+    </div>
   );
 }

@@ -1,23 +1,18 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import ClientLayout from "./client-layout";
+
+const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
 export const metadata: Metadata = {
-  title: "TestGate — Sàng lọc ứng viên thông minh",
-  description: "Nền tảng tạo bài test online để sàng lọc ứng viên vòng loại. Tiết kiệm thời gian, chuẩn hóa đánh giá, chọn đúng người.",
-  keywords: "tuyển dụng, test ứng viên, sàng lọc CV, bài kiểm tra online, HR tech",
+  title: "W-Future Leader — Production Trainee Season 2",
+  description: "Bài test sàng lọc ứng viên W-Future Leader — Wilmar CLV",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi">
-      <body>
-        <ClientLayout>{children}</ClientLayout>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
