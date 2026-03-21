@@ -5,7 +5,7 @@ import styles from "./admin.module.css";
 import * as XLSX from "xlsx";
 import { GroupPieChart, PassFailPieChart, ScoreDistributionChart, AvgByGroupChart, TimelineChart } from "./charts";
 import QuestionEditor from "./question-editor";
-import { ChartPie, ClipboardText, Gavel, NotePencil, DownloadSimple, X, CheckCircle, XCircle, ChartBar, Trophy, PencilSimple } from "@phosphor-icons/react";
+import { ChartPie, ClipboardText, Gavel, NotePencil, DownloadSimple, X, CheckCircle, XCircle, ChartBar, Trophy, PencilSimple, Eye, EyeSlash } from "@phosphor-icons/react";
 
 const ADMIN_PIN = "WFL2026";
 
@@ -47,6 +47,7 @@ export default function AdminPage() {
     const [authed, setAuthed] = useState(false);
     const [pin, setPin] = useState("");
     const [pinError, setPinError] = useState("");
+    const [showPin, setShowPin] = useState(false);
     const [activeTab, setActiveTab] = useState<"dashboard" | "submissions" | "judges" | "questions">("dashboard");
 
     const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -211,7 +212,12 @@ export default function AdminPage() {
                     <img src="/wfl-logo.png" alt="WFL" />
                     <h1>Admin Dashboard</h1>
                     <p>Nhập mã PIN để truy cập hệ thống quản lý</p>
-                    <input className={styles.loginInput} type="password" placeholder="••••••" value={pin} onChange={e => setPin(e.target.value)} onKeyDown={e => e.key === "Enter" && handleLogin()} />
+                    <div style={{ position: 'relative' }}>
+                        <input className={styles.loginInput} type={showPin ? "text" : "password"} placeholder="••••••" value={pin} onChange={e => setPin(e.target.value)} onKeyDown={e => e.key === "Enter" && handleLogin()} style={{ paddingRight: 44 }} />
+                        <button onClick={() => setShowPin(!showPin)} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-tertiary)', padding: 4 }} title={showPin ? "Ẩn mật khẩu" : "Hiện mật khẩu"}>
+                            {showPin ? <EyeSlash size={20} /> : <Eye size={20} />}
+                        </button>
+                    </div>
                     <button className={styles.loginBtn} onClick={handleLogin}>Đăng nhập</button>
                     {pinError && <p className={styles.loginError}>{pinError}</p>}
                 </div>
