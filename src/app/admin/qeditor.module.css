@@ -403,11 +403,160 @@
 }
 
 @media (max-width: 768px) {
+    .qeHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .qeHeader h3 {
+        font-size: 0.95rem;
+    }
+
+    .qeAddBtn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Form cards */
+    .qeFormCard {
+        padding: 0.75rem;
+    }
+
+    .qeFormGrid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    /* Group header inline edit */
+    .qeEditInline {
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .qeEditInline input {
+        width: 100% !important;
+        flex: none !important;
+    }
+
+    .qeEditInline span {
+        display: none;
+    }
+
+    .qeGroupHeader {
+        padding: 0.75rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .qeGroupTitle {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .qeGroupTitle h4 {
+        font-size: 0.9rem;
+    }
+
+    .qeGroupMeta {
+        font-size: 0.7rem;
+    }
+
+    .qeGroupActions {
+        margin-left: auto;
+    }
+
+    /* Question form (edit / add) */
+    .qeQForm {
+        padding: 0.75rem;
+        margin: 0.4rem 0.5rem;
+    }
+
     .qeQFormRow {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .qeQFormRow>div {
+        width: 100% !important;
+        flex: none !important;
+    }
+
+    .qeFormActions {
         flex-direction: column;
     }
 
-    .qeEditInline {
+    .qeFormActions button,
+    .qeSaveBtn,
+    .qeCancelBtn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Options */
+    .qeOptions {
+        padding: 0.5rem;
+    }
+
+    .qeOptionRow {
+        gap: 0.3rem;
+    }
+
+    .qeOptionRow input[type="text"] {
+        font-size: 0.8rem;
+        min-width: 0;
+    }
+
+    .qeOptionRow input[type="checkbox"],
+    .qeOptionRow input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .qeOptDelete {
+        padding: 4px;
+        font-size: 0.8rem;
+    }
+
+    .qeAddOptBtn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Question list items */
+    .qeQuestionRow {
+        padding: 0.5rem 0.75rem;
+        gap: 0.5rem;
         flex-wrap: wrap;
+    }
+
+    .qeQContent {
+        min-width: 0;
+    }
+
+    .qeQType {
+        font-size: 0.6rem;
+    }
+
+    .qeQText {
+        font-size: 0.78rem;
+    }
+
+    .qeQActions {
+        opacity: 1;
+    }
+
+    .qeAddQBtn {
+        font-size: 0.8rem;
+    }
+
+    /* True/False */
+    .qeTFRow {
+        gap: 1rem;
+    }
+
+    .qeTFRow label {
+        font-size: 0.82rem;
     }
 }
