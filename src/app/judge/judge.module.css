@@ -454,15 +454,99 @@
     line-height: 1.4;
 }
 
-.answerResult {
-    font-size: 0.85rem;
-    color: #475569;
+.qMaxPts {
+    font-size: 0.65rem;
+    color: #005951;
+    font-weight: 700;
+    margin-left: auto;
+    background: rgba(0, 89, 81, 0.08);
+    padding: 2px 8px;
+    border-radius: 6px;
 }
 
-.noAnswer {
-    color: #94a3b8;
-    font-style: italic;
-    font-size: 0.8rem;
+.candidateAnswer {
+    margin: 0.5rem 0;
+}
+
+.candidateAnswer label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.answerBox {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.88rem;
+    color: #1a1a2e;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.perQScore {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.perQScore label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
+    white-space: nowrap;
+}
+
+.perQScore input {
+    width: 80px;
+    padding: 5px 10px;
+    border: 2px solid rgba(0, 89, 81, 0.2);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #005951;
+    text-align: center;
+    transition: border-color 0.2s;
+}
+
+.perQScore input:focus {
+    outline: none;
+    border-color: #005951;
+}
+
+.scoreSummary {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(0, 89, 81, 0.08);
+    border-radius: 10px;
+}
+
+.scoreSummary h3 {
+    font-size: 1rem;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.scoreSummary strong {
+    color: #005951;
+    font-size: 1.2rem;
+}
+
+.oldFormatNotice {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+    line-height: 1.4;
 }
 
 /* Score section */

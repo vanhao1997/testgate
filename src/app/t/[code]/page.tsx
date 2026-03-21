@@ -468,12 +468,22 @@ const TEST_GROUPS: TestGroup[] = [
 function gradeAnswers(group: TestGroup, answers: AnswerMap) {
     let totalScore = 0;
     let totalPoints = 0;
-    const details: { qid: string; correct: boolean; points: number }[] = [];
+    const details: { qid: string; question: string; type: string; answer_text: string; correct: boolean; points: number; max_points: number }[] = [];
 
     group.questions.forEach((q) => {
         totalPoints += q.points;
         const ans = answers[q.id];
         let correct = false;
+        let answerText = "";
+
+        // Build answer text
+        if (Array.isArray(ans)) {
+            answerText = ans.join(", ");
+        } else if (ans) {
+            answerText = String(ans);
+        } else {
+            answerText = "(Chưa trả lời)";
+        }
 
         if (q.type === "short_answer") {
             const c = String(q.correct_answer).toLowerCase();
@@ -489,7 +499,7 @@ function gradeAnswers(group: TestGroup, answers: AnswerMap) {
         }
 
         if (correct) totalScore += q.points;
-        details.push({ qid: q.id, correct, points: correct ? q.points : 0 });
+        details.push({ qid: q.id, question: q.content, type: q.type, answer_text: answerText, correct, points: correct ? q.points : 0, max_points: q.points });
     });
 
     return { totalScore, totalPoints, details };
