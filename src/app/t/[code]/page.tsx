@@ -201,9 +201,12 @@ export default function CandidateTestPage() {
         setShowThankYou(true);
     }, [selectedGroup, answers, candidateName, candidateEmail, candidatePhone, candidateId, saving]);
 
+    // Auto-submit when time runs out
     useEffect(() => {
-        if (phase === "test" && timeLeft === 0 && totalTime > 0) handleSubmit();
-    }, [timeLeft, phase, handleSubmit, totalTime]);
+        if (phase === "test" && timeLeft === 0 && totalTime > 0 && !saving && !showThankYou) {
+            handleSubmit();
+        }
+    }, [timeLeft, phase, handleSubmit, totalTime, saving, showThankYou]);
 
     const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
     const timerState = timeLeft <= 30 ? "danger" : timeLeft <= 120 ? "warning" : "normal";
