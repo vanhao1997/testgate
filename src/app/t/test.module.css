@@ -409,6 +409,18 @@
     margin-bottom: var(--space-lg);
 }
 
+.test-question-image {
+    margin-bottom: var(--space-lg);
+}
+
+.test-question-image img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    object-fit: contain;
+}
+
 .test-options {
     display: flex;
     flex-direction: column;

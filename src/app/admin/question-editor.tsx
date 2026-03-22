@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import styles from "./qeditor.module.css";
-import { NotePencil, PencilSimple, Trash, X, Plus, CaretDown, CaretRight } from "@phosphor-icons/react";
+import { NotePencil, PencilSimple, Trash, X, Plus, CaretDown, CaretRight, ImageSquare } from "@phosphor-icons/react";
 
 interface TestGroup {
     id: string; title: string; description: string; icon: string;
@@ -13,6 +13,7 @@ interface TestGroup {
 interface Question {
     id: string; group_id: string; type: string; content: string;
     points: number; correct_answer: string; options: any[]; sort_order: number;
+    image_url?: string;
 }
 
 interface OptionItem { id: string; content: string; is_correct: boolean; }
@@ -86,7 +87,7 @@ export default function QuestionEditor() {
     /* === Question CRUD === */
     const saveQuestion = async (q: Partial<Question>, gid: string, isNew: boolean) => {
         setSaving(true);
-        const payload = { group_id: gid, type: q.type, content: q.content, points: q.points, correct_answer: q.correct_answer, options: q.options || [], sort_order: q.sort_order || 0 };
+        const payload = { group_id: gid, type: q.type, content: q.content, points: q.points, correct_answer: q.correct_answer, options: q.options || [], sort_order: q.sort_order || 0, image_url: q.image_url || null };
         if (isNew) {
             await supabase.from("questions").insert(payload);
         } else {
@@ -94,7 +95,7 @@ export default function QuestionEditor() {
         }
         await loadData();
         setSaving(false); setEditQ(null); setShowNewQ(false);
-        setNewQ({ type: "single_choice", content: "", points: 10, correct_answer: "", options: [], sort_order: 0 });
+        setNewQ({ type: "single_choice", content: "", points: 10, correct_answer: "", options: [], sort_order: 0, image_url: "" });
     };
 
     const deleteQuestion = async (id: string) => {
@@ -260,6 +261,36 @@ function QuestionForm({ q, setQ, saving, onSave, onCancel, addOption, removeOpti
                     <label>Điểm</label>
                     <input type="number" value={q.points} onChange={e => setQ({ ...q, points: parseInt(e.target.value) || 0 })} />
                 </div>
+            </div>
+
+            {/* Image upload */}
+            <div className={styles.qeImageSection}>
+                <label><ImageSquare size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />Hình ảnh minh họa (tùy chọn)</label>
+                {q.image_url ? (
+                    <div className={styles.qeImagePreview}>
+                        <img src={q.image_url} alt="Minh họa" />
+                        <button onClick={() => setQ({ ...q, image_url: "" })} title="Xóa ảnh"><X size={14} /></button>
+                    </div>
+                ) : (
+                    <div className={styles.qeImageUpload}>
+                        <input type="file" accept="image/*" onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const ext = file.name.split('.').pop();
+                            const path = `questions/${Date.now()}.${ext}`;
+                            const { error } = await supabase.storage.from('question-images').upload(path, file);
+                            if (error) {
+                                // If bucket doesn't exist or error, use base64 fallback
+                                const reader = new FileReader();
+                                reader.onload = () => setQ({ ...q, image_url: reader.result as string });
+                                reader.readAsDataURL(file);
+                                return;
+                            }
+                            const { data: urlData } = supabase.storage.from('question-images').getPublicUrl(path);
+                            setQ({ ...q, image_url: urlData.publicUrl });
+                        }} />
+                    </div>
+                )}
             </div>
 
             {/* Options for choice questions */}

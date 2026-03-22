@@ -25,6 +25,7 @@ interface QuestionDef {
     points: number;
     correct_answer: string | string[];
     options?: { id: string; content: string; is_correct: boolean }[];
+    image_url?: string;
 }
 
 interface TestGroup {
@@ -123,13 +124,14 @@ export default function CandidateTestPage() {
                     durationMinutes: g.duration_minutes,
                     questions: allQuestions
                         .filter((q: { group_id: string }) => q.group_id === g.id)
-                        .map((q: { id: string; type: string; content: string; points: number; correct_answer: string; options: { id: string; content: string; is_correct: boolean }[] }) => ({
+                        .map((q: { id: string; type: string; content: string; points: number; correct_answer: string; options: { id: string; content: string; is_correct: boolean }[]; image_url?: string }) => ({
                             id: q.id,
                             type: q.type as QuestionDef["type"],
                             content: q.content,
                             points: q.points,
                             correct_answer: q.type === "multiple_choice" ? (() => { try { return JSON.parse(q.correct_answer); } catch { return q.correct_answer; } })() : q.correct_answer,
                             options: q.options || [],
+                            image_url: q.image_url || undefined,
                         })),
                 }));
                 setTestGroups(mapped);
@@ -354,6 +356,11 @@ export default function CandidateTestPage() {
 
                             </div>
                             <div className={styles["test-question-text"]}>{q.content}</div>
+                            {q.image_url && (
+                                <div className={styles["test-question-image"]}>
+                                    <img src={q.image_url} alt={`Minh họa câu ${idx + 1}`} />
+                                </div>
+                            )}
                             {q.type !== "short_answer" && q.options ? (
                                 <div className={styles["test-options"]}>
                                     {q.options.map((opt) => (
