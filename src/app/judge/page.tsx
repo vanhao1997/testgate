@@ -70,6 +70,18 @@ export default function JudgePage() {
     const [judge, setJudge] = useState<Judge | null>(null);
     const [email, setEmail] = useState("");
     const [loginError, setLoginError] = useState("");
+
+    // Restore session from localStorage
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem("judge_session");
+            if (saved) {
+                const { judge: j, ts } = JSON.parse(saved);
+                if (Date.now() - ts < 24 * 60 * 60 * 1000 && j) setJudge(j);
+                else localStorage.removeItem("judge_session");
+            }
+        } catch { /* ignore */ }
+    }, []);
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -106,6 +118,7 @@ export default function JudgePage() {
             return;
         }
         setJudge(data as Judge);
+        localStorage.setItem("judge_session", JSON.stringify({ judge: data, ts: Date.now() }));
     };
 
     // Load submissions
@@ -270,7 +283,7 @@ export default function JudgePage() {
                 </div>
                 <div className={styles.navRight}>
                     <span className={styles.roleBadge}>{judge.role === "admin" ? "Admin" : "Giám khảo"}</span>
-                    <button onClick={() => { setJudge(null); setEmail(""); }}>Đăng xuất</button>
+                    <button onClick={() => { setJudge(null); setEmail(""); localStorage.removeItem("judge_session"); }}>Đăng xuất</button>
                 </div>
             </nav>
 

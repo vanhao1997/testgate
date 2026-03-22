@@ -51,6 +51,18 @@ export default function AdminPage() {
     const [showPin, setShowPin] = useState(false);
     const [activeTab, setActiveTab] = useState<"dashboard" | "submissions" | "judges" | "questions" | "guide">("dashboard");
 
+    // Restore session from localStorage
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem("admin_session");
+            if (saved) {
+                const { ts } = JSON.parse(saved);
+                if (Date.now() - ts < 24 * 60 * 60 * 1000) setAuthed(true);
+                else localStorage.removeItem("admin_session");
+            }
+        } catch { /* ignore */ }
+    }, []);
+
     // Export modal
     const [showExport, setShowExport] = useState(false);
     const [exportOpts, setExportOpts] = useState({
@@ -99,7 +111,7 @@ export default function AdminPage() {
     }, [selectedSub]);
 
     const handleLogin = () => {
-        if (pin === ADMIN_PIN) { setAuthed(true); setPinError(""); } else { setPinError("Mã PIN không đúng"); }
+        if (pin === ADMIN_PIN) { setAuthed(true); setPinError(""); localStorage.setItem("admin_session", JSON.stringify({ ts: Date.now() })); } else { setPinError("Mã PIN không đúng"); }
     };
 
     const handleScore = async () => {
@@ -251,7 +263,7 @@ export default function AdminPage() {
                 </div>
                 <div className={styles.adminNavRight}>
                     <button className={styles.exportBtn} onClick={() => setShowExport(true)}><DownloadSimple size={18} weight="bold" /> Tải Excel</button>
-                    <button onClick={() => { setAuthed(false); setPin(""); }}>Đăng xuất</button>
+                    <button onClick={() => { setAuthed(false); setPin(""); localStorage.removeItem("admin_session"); }}>Đăng xuất</button>
                 </div>
             </div>
 
