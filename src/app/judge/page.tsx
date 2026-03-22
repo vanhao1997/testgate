@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import styles from "./judge.module.css";
-import { ClipboardText, NotePencil, X, ChatText, Star, FloppyDisk, CheckCircle, Warning, Funnel, SortAscending } from "@phosphor-icons/react";
+import { ClipboardText, NotePencil, X, ChatText, Star, FloppyDisk, CheckCircle, Warning, Funnel, SortAscending, ThumbsUp, ThumbsDown } from "@phosphor-icons/react";
 
 /* ====== Types ====== */
 interface AnswerDetail {
@@ -47,6 +47,12 @@ interface JudgeScore {
     judges?: { name: string };
 }
 
+interface TestGroupInfo {
+    id: string;
+    title: string;
+    description: string;
+}
+
 const groupLabel = (g: string) => {
     if (g === "finance") return "Finance";
     if (g === "sc-planning") return "SC Planning";
@@ -80,8 +86,12 @@ export default function JudgePage() {
     const [subScores, setSubScores] = useState<JudgeScore[]>([]);
     const [perQScores, setPerQScores] = useState<Record<number, string>>({});
     const [myNotes, setMyNotes] = useState("");
+    const [myVerdict, setMyVerdict] = useState<"" | "pass" | "fail">("");
     const [saving, setSaving] = useState(false);
     const [saveMsg, setSaveMsg] = useState("");
+
+    // Test group titles
+    const [testGroupInfos, setTestGroupInfos] = useState<TestGroupInfo[]>([]);
 
     // Login
     const handleLogin = async () => {
@@ -119,6 +129,19 @@ export default function JudgePage() {
         if (judge) { loadSubmissions(); loadAllScores(); }
     }, [judge, loadSubmissions, loadAllScores]);
 
+    // Load test group titles
+    useEffect(() => {
+        (async () => {
+            const { data } = await supabase.from("test_groups").select("id,title,description");
+            if (data) setTestGroupInfos(data as TestGroupInfo[]);
+        })();
+    }, []);
+
+    const getGroupTitle = (gid: string) => {
+        const found = testGroupInfos.find(g => g.id === gid);
+        return found ? found.title : groupLabel(gid);
+    };
+
     // Graded status helpers
     const gradedIds = new Set(allScores.map(s => s.result_id));
     const isGraded = (id: string) => gradedIds.has(id);
@@ -142,13 +165,16 @@ export default function JudgePage() {
                         const parsed = JSON.parse(mine.notes);
                         if (parsed.perQ) setPerQScores(parsed.perQ);
                         setMyNotes(parsed.comment || "");
+                        setMyVerdict(parsed.verdict || "");
                     } catch {
                         setMyNotes(mine.notes || "");
                         setPerQScores({});
+                        setMyVerdict("");
                     }
                 } else {
                     setPerQScores({});
                     setMyNotes("");
+                    setMyVerdict("");
                 }
             }
         })();
@@ -163,7 +189,7 @@ export default function JudgePage() {
         if (!selectedSub || !judge) return;
         setSaving(true);
         setSaveMsg("");
-        const notesData = JSON.stringify({ perQ: perQScores, comment: myNotes });
+        const notesData = JSON.stringify({ perQ: perQScores, comment: myNotes, verdict: myVerdict });
         await supabase.from("judge_scores").upsert({
             result_id: selectedSub.id,
             judge_id: judge.id,
@@ -314,6 +340,7 @@ export default function JudgePage() {
                                         <span className={`${styles.groupTag} ${styles["group_" + s.test_group.replace("-", "_")]}`}>
                                             {groupLabel(s.test_group)}
                                         </span>
+                                        <span style={{ fontSize: '0.6rem', color: '#64748b' }}>{getGroupTitle(s.test_group)}</span>
                                         {isGraded(s.id) ? (
                                             <span className={styles.gradedBadge}><CheckCircle size={12} weight="fill" /> Đã chấm</span>
                                         ) : (
@@ -356,6 +383,7 @@ export default function JudgePage() {
                                 <div><label>Họ tên</label><span>{selectedSub.candidate_name}</span></div>
                                 <div><label>Email</label><span>{selectedSub.candidate_email}</span></div>
                                 <div><label>Nhóm</label><span className={`${styles.groupTag} ${styles["group_" + selectedSub.test_group.replace("-", "_")]}`}>{groupLabel(selectedSub.test_group)}</span></div>
+                                <div><label>Chủ đề</label><span>{getGroupTitle(selectedSub.test_group)}</span></div>
                             </div>
 
                             {/* Questions + Answers + Per-Q grading */}
@@ -410,6 +438,25 @@ export default function JudgePage() {
                                     <label>Nhận xét chung</label>
                                     <textarea value={myNotes} onChange={e => setMyNotes(e.target.value)} placeholder="Ghi nhận xét chung cho ứng viên..." rows={3} />
                                 </div>
+
+                                {/* Verdict: Pass / Fail */}
+                                <div className={styles.verdictSection}>
+                                    <label>Kết quả đánh giá</label>
+                                    <div className={styles.verdictBtns}>
+                                        <button
+                                            className={`${styles.verdictBtn} ${myVerdict === "pass" ? styles.verdictPass : ""}`}
+                                            onClick={() => setMyVerdict(myVerdict === "pass" ? "" : "pass")}
+                                        >
+                                            <ThumbsUp size={18} weight={myVerdict === "pass" ? "fill" : "regular"} /> Đạt
+                                        </button>
+                                        <button
+                                            className={`${styles.verdictBtn} ${myVerdict === "fail" ? styles.verdictFail : ""}`}
+                                            onClick={() => setMyVerdict(myVerdict === "fail" ? "" : "fail")}
+                                        >
+                                            <ThumbsDown size={18} weight={myVerdict === "fail" ? "fill" : "regular"} /> Không đạt
+                                        </button>
+                                    </div>
+                                </div>
                                 <div className={styles.scoreActions}>
                                     <button className={styles.saveBtn} onClick={handleScore} disabled={saving}>
                                         {saving ? "Đang lưu..." : <><FloppyDisk size={18} style={{ verticalAlign: 'middle', marginRight: 4 }} />Lưu tất cả điểm</>}
@@ -427,7 +474,17 @@ export default function JudgePage() {
                                                     <strong>{sc.judges?.name || "GK"}</strong>
                                                     {sc.judge_id === judge.id && <span className={styles.youBadge}>Bạn</span>}
                                                 </div>
-                                                <span className={styles.scoreNum}>{sc.score} điểm</span>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                    <span className={styles.scoreNum}>{sc.score} điểm</span>
+                                                    {(() => {
+                                                        try {
+                                                            const p = JSON.parse(sc.notes);
+                                                            if (p.verdict === "pass") return <span className={styles.verdictPassBadge}>Đạt</span>;
+                                                            if (p.verdict === "fail") return <span className={styles.verdictFailBadge}>Không đạt</span>;
+                                                        } catch { /* no verdict */ }
+                                                        return null;
+                                                    })()}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
