@@ -167,7 +167,7 @@
 
 /* ========== ENTRY FORM ========== */
 .test-entry {
-    max-width: 480px;
+    max-width: 800px;
     margin: 4rem auto;
     padding: 0 var(--space-xl);
     animation: fadeInUp 0.5s ease;
@@ -220,7 +220,7 @@
 
 /* ========== GROUP SELECTION ========== */
 .group-selection {
-    max-width: 720px;
+    max-width: 1200px;
     margin: 3rem auto;
     padding: 0 var(--space-xl);
     animation: fadeInUp 0.5s ease;
@@ -294,15 +294,15 @@
 }
 
 .group-icon-marketing {
-    background: linear-gradient(135deg, rgba(0, 89, 81, 0.15), rgba(0, 122, 111, 0.15));
+    background: linear-gradient(135deg, rgba(42, 138, 142, 0.15), rgba(53, 170, 176, 0.15));
 }
 
 .group-icon-sales {
-    background: linear-gradient(135deg, rgba(253, 221, 41, 0.2), rgba(232, 201, 0, 0.2));
+    background: linear-gradient(135deg, rgba(250, 164, 52, 0.2), rgba(253, 185, 91, 0.2));
 }
 
 .group-icon-tech {
-    background: linear-gradient(135deg, rgba(0, 179, 164, 0.15), rgba(0, 153, 140, 0.15));
+    background: linear-gradient(135deg, rgba(22, 163, 74, 0.15), rgba(34, 197, 94, 0.15));
 }
 
 .group-card h3 {

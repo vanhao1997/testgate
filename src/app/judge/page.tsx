@@ -60,10 +60,10 @@ const groupLabel = (g: string) => {
 };
 
 const typeLabel = (t: string) => {
-    if (t === "short_answer") return "Tự luận";
-    if (t === "true_false") return "Đúng/Sai";
-    if (t === "multiple_choice") return "Nhiều đáp án";
-    return "Trắc nghiệm";
+    if (t === "short_answer") return "Essay";
+    if (t === "true_false") return "True/False";
+    if (t === "multiple_choice") return "Multiple Choice";
+    return "Quiz";
 };
 
 export default function JudgePage() {
@@ -114,7 +114,7 @@ export default function JudgePage() {
             .eq("email", email.trim().toLowerCase())
             .single();
         if (error || !data) {
-            setLoginError("Email chưa được cấp quyền giám khảo. Liên hệ Admin để được thêm.");
+            setLoginError("Email is not authorized as a judge. Contact Admin to be added.");
             return;
         }
         setJudge(data as Judge);
@@ -216,7 +216,7 @@ export default function JudgePage() {
             .eq("result_id", selectedSub.id);
         if (data) setSubScores(data as JudgeScore[]);
         setSaving(false);
-        setSaveMsg("Đã lưu điểm thành công!");
+        setSaveMsg("Scores saved successfully!");
         loadAllScores();
         setTimeout(() => setSaveMsg(""), 3000);
     };
@@ -253,8 +253,8 @@ export default function JudgePage() {
             <div className={styles.loginPage}>
                 <div className={styles.loginCard}>
                     <img src="/wfl-logo.png" alt="WFL" />
-                    <h1>Cổng Giám khảo</h1>
-                    <p>Nhập email đã được Admin cấp quyền</p>
+                    <h1>Judge Portal</h1>
+                    <p>Enter email authorized by Admin</p>
                     <input
                         className={styles.loginInput}
                         type="email"
@@ -263,7 +263,7 @@ export default function JudgePage() {
                         onChange={e => setEmail(e.target.value)}
                         onKeyDown={e => e.key === "Enter" && handleLogin()}
                     />
-                    <button className={styles.loginBtn} onClick={handleLogin}>Đăng nhập</button>
+                    <button className={styles.loginBtn} onClick={handleLogin}>Login</button>
                     {loginError && <p className={styles.loginError}>{loginError}</p>}
                 </div>
             </div>
@@ -277,13 +277,13 @@ export default function JudgePage() {
                 <div className={styles.navLeft}>
                     <img src="/wfl-logo.png" alt="WFL" />
                     <div>
-                        <h1>Chấm điểm ứng viên</h1>
-                        <span>Xin chào, <strong>{judge.name}</strong></span>
+                        <h1>Grade Candidates</h1>
+                        <span>Hello, <strong>{judge.name}</strong></span>
                     </div>
                 </div>
                 <div className={styles.navRight}>
-                    <span className={styles.roleBadge}>{judge.role === "admin" ? "Admin" : "Giám khảo"}</span>
-                    <button onClick={() => { setJudge(null); setEmail(""); localStorage.removeItem("judge_session"); }}>Đăng xuất</button>
+                    <span className={styles.roleBadge}>{judge.role === "admin" ? "Admin" : "Judge"}</span>
+                    <button onClick={() => { setJudge(null); setEmail(""); localStorage.removeItem("judge_session"); }}>Logout</button>
                 </div>
             </nav>
 
@@ -291,15 +291,15 @@ export default function JudgePage() {
                 <div className={styles.statsRow}>
                     <div className={styles.stat}>
                         <span className={styles.statNum}>{submissions.length}</span>
-                        <span className={styles.statLabel}>Tổng bài</span>
+                        <span className={styles.statLabel}>Total</span>
                     </div>
                     <div className={`${styles.stat} ${styles.statGraded}`}>
                         <span className={styles.statNum}>{gradedCount}</span>
-                        <span className={styles.statLabel}>Đã chấm</span>
+                        <span className={styles.statLabel}>Graded</span>
                     </div>
                     <div className={`${styles.stat} ${styles.statUngraded}`}>
                         <span className={styles.statNum}>{ungradedCount}</span>
-                        <span className={styles.statLabel}>Chưa chấm</span>
+                        <span className={styles.statLabel}>Ungraded</span>
                     </div>
                     <div className={styles.stat}>
                         <span className={styles.statNum}>{submissions.filter(s => s.test_group === "finance").length}</span>
@@ -312,33 +312,33 @@ export default function JudgePage() {
                 </div>
 
                 <div className={styles.toolbar}>
-                    <h2>Danh sách bài nộp ({sorted.length})</h2>
+                    <h2>Submission List ({sorted.length})</h2>
                     <div className={styles.filters}>
-                        <input className={styles.searchInput} placeholder="Tìm tên hoặc SBD..." value={searchText} onChange={e => setSearchText(e.target.value)} />
+                        <input className={styles.searchInput} placeholder="Search name or ID..." value={searchText} onChange={e => setSearchText(e.target.value)} />
                         <select className={styles.filterSelect} value={filterGroup} onChange={e => setFilterGroup(e.target.value)}>
-                            <option value="all">Tất cả nhóm</option>
+                            <option value="all">All Groups</option>
                             <option value="finance">Finance</option>
                             <option value="sc-planning">SC Planning</option>
                             <option value="sc-logistics">SC Logistics</option>
                         </select>
                         <select className={styles.filterSelect} value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)}>
-                            <option value="all">Tất cả trạng thái</option>
-                            <option value="graded">Đã chấm</option>
-                            <option value="ungraded">Chưa chấm</option>
+                            <option value="all">All Status</option>
+                            <option value="graded">Graded</option>
+                            <option value="ungraded">Ungraded</option>
                         </select>
                         <select className={styles.filterSelect} value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
-                            <option value="time">Mới nhất</option>
-                            <option value="score_desc">Điểm cao → thấp</option>
-                            <option value="score_asc">Điểm thấp → cao</option>
-                            <option value="name">Tên A-Z</option>
+                            <option value="time">Newest</option>
+                            <option value="score_desc">Score High → Low</option>
+                            <option value="score_asc">Score Low → High</option>
+                            <option value="name">Name A-Z</option>
                         </select>
                     </div>
                 </div>
 
                 {loading ? (
-                    <div className={styles.empty}>Đang tải...</div>
+                    <div className={styles.empty}>Loading...</div>
                 ) : sorted.length === 0 ? (
-                    <div className={styles.empty}>Không có bài nộp nào</div>
+                    <div className={styles.empty}>No submissions found</div>
                 ) : (
                     <div className={styles.subGrid}>
                         {sorted.map(s => (
@@ -347,7 +347,7 @@ export default function JudgePage() {
                                     <div className={styles.subAvatar}>{s.candidate_name.charAt(0).toUpperCase()}</div>
                                     <div>
                                         <h3>{s.candidate_name}</h3>
-                                        <p>{s.candidate_id || "Chưa có SBD"}</p>
+                                        <p>{s.candidate_id || "No ID"}</p>
                                     </div>
                                     <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
                                         <span className={`${styles.groupTag} ${styles["group_" + s.test_group.replace("-", "_")]}`}>
@@ -355,9 +355,9 @@ export default function JudgePage() {
                                         </span>
                                         <span style={{ fontSize: '0.6rem', color: '#64748b' }}>{getGroupTitle(s.test_group)}</span>
                                         {isGraded(s.id) ? (
-                                            <span className={styles.gradedBadge}><CheckCircle size={12} weight="fill" /> Đã chấm</span>
+                                            <span className={styles.gradedBadge}><CheckCircle size={12} weight="fill" /> Graded</span>
                                         ) : (
-                                            <span className={styles.ungradedBadge}>Chưa chấm</span>
+                                            <span className={styles.ungradedBadge}>Ungraded</span>
                                         )}
                                     </div>
                                 </div>
@@ -367,13 +367,13 @@ export default function JudgePage() {
                                         <span className={styles.subScorePct}>{s.percentage}%</span>
                                     </div>
                                     <span className={`${styles.statusBadge} ${s.passed ? styles.statusPass : styles.statusFail}`}>
-                                        {s.passed ? "Đạt" : "Chưa đạt"}
+                                        {s.passed ? "Passed" : "Failed"}
                                     </span>
                                 </div>
                                 <div className={styles.subCardTime}>
-                                    {new Date(s.submitted_at).toLocaleString("vi-VN")}
+                                    {new Date(s.submitted_at).toLocaleString("en-US")}
                                 </div>
-                                <button className={styles.gradeBtn}><NotePencil size={16} /> Chấm điểm</button>
+                                <button className={styles.gradeBtn}><NotePencil size={16} /> Grade</button>
                             </div>
                         ))}
                     </div>
@@ -385,43 +385,43 @@ export default function JudgePage() {
                 <div className={styles.overlay} onClick={() => setSelectedSub(null)}>
                     <div className={styles.panel} onClick={e => e.stopPropagation()}>
                         <div className={styles.panelHeader}>
-                            <h2><ClipboardText size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} />Chấm điểm — {selectedSub.candidate_name}</h2>
+                            <h2><ClipboardText size={22} style={{ verticalAlign: 'middle', marginRight: 6 }} />Grade — {selectedSub.candidate_name}</h2>
                             <button className={styles.closeBtn} onClick={() => setSelectedSub(null)}><X size={20} /></button>
                         </div>
 
                         <div className={styles.panelBody}>
                             {/* Candidate info */}
                             <div className={styles.infoGrid}>
-                                <div><label>SBD</label><span>{selectedSub.candidate_id || "—"}</span></div>
-                                <div><label>Họ tên</label><span>{selectedSub.candidate_name}</span></div>
+                                <div><label>ID</label><span>{selectedSub.candidate_id || "—"}</span></div>
+                                <div><label>Name</label><span>{selectedSub.candidate_name}</span></div>
                                 <div><label>Email</label><span>{selectedSub.candidate_email}</span></div>
-                                <div><label>Nhóm</label><span className={`${styles.groupTag} ${styles["group_" + selectedSub.test_group.replace("-", "_")]}`}>{groupLabel(selectedSub.test_group)}</span></div>
-                                <div><label>Chủ đề</label><span>{getGroupTitle(selectedSub.test_group)}</span></div>
+                                <div><label>Group</label><span className={`${styles.groupTag} ${styles["group_" + selectedSub.test_group.replace("-", "_")]}`}>{groupLabel(selectedSub.test_group)}</span></div>
+                                <div><label>Topic</label><span>{getGroupTitle(selectedSub.test_group)}</span></div>
                             </div>
 
                             {/* Questions + Answers + Per-Q grading */}
-                            <h3 className={styles.sectionTitle}><NotePencil size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Đọc câu trả lời và chấm điểm từng câu</h3>
+                            <h3 className={styles.sectionTitle}><NotePencil size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Read answers and grade each question</h3>
                             <div className={styles.answersList}>
                                 {(selectedSub.answers || []).map((a, idx) => (
                                     <div key={idx} className={styles.answerItem}>
                                         <div className={styles.answerQ}>
-                                            <span className={styles.qNum}>Câu {idx + 1}</span>
+                                            <span className={styles.qNum}>Question {idx + 1}</span>
                                             <span className={styles.qType}>{typeLabel(a.type)}</span>
-                                            <span className={styles.qMaxPts}>{a.max_points} đ tối đa</span>
+                                            <span className={styles.qMaxPts}>{a.max_points} max pts</span>
                                         </div>
-                                        <p className={styles.qContent}>{a.question || `Câu hỏi #${idx + 1}`}</p>
+                                        <p className={styles.qContent}>{a.question || `Question #${idx + 1}`}</p>
 
                                         {/* Candidate's actual answer */}
                                         <div className={styles.candidateAnswer}>
-                                            <label><ChatText size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} />Câu trả lời của ứng viên:</label>
+                                            <label><ChatText size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} />Candidate's answer:</label>
                                             <div className={styles.answerBox}>
-                                                {a.answer_text || "(Chưa trả lời)"}
+                                                {a.answer_text || "(Not answered)"}
                                             </div>
                                         </div>
 
                                         {/* Judge score input per question */}
                                         <div className={styles.perQScore}>
-                                            <label>Điểm (0-{a.max_points}):</label>
+                                            <label>Score (0-{a.max_points}):</label>
                                             <input
                                                 type="number"
                                                 min="0"
@@ -438,41 +438,41 @@ export default function JudgePage() {
                             {/* If old format answers (no answer_text), show fallback */}
                             {selectedSub.answers?.length > 0 && !selectedSub.answers[0]?.question && (
                                 <div className={styles.oldFormatNotice}>
-                                    <Warning size={18} style={{ verticalAlign: 'middle', marginRight: 4 }} />Bài này được nộp trước bản cập nhật — chưa lưu nội dung câu trả lời. Các bài nộp mới sẽ hiển thị đầy đủ.
+                                    <Warning size={18} style={{ verticalAlign: 'middle', marginRight: 4 }} />This was submitted before the update - answers are not saved. New submissions will show properly.
                                 </div>
                             )}
 
                             {/* Summary + Notes + Save */}
                             <div className={styles.scoreSection}>
                                 <div className={styles.scoreSummary}>
-                                    <h3><Star size={20} weight="fill" color="#f59e0b" style={{ verticalAlign: 'middle', marginRight: 6 }} />Tổng điểm của bạn: <strong>{totalJudgeScore}</strong> / {totalMaxPoints}</h3>
+                                    <h3><Star size={20} weight="fill" color="#f59e0b" style={{ verticalAlign: 'middle', marginRight: 6 }} />Your total score: <strong>{totalJudgeScore}</strong> / {totalMaxPoints}</h3>
                                 </div>
                                 <div className={styles.scoreField} style={{ marginTop: "0.75rem" }}>
-                                    <label>Nhận xét chung</label>
-                                    <textarea value={myNotes} onChange={e => setMyNotes(e.target.value)} placeholder="Ghi nhận xét chung cho ứng viên..." rows={3} />
+                                    <label>General Notes</label>
+                                    <textarea value={myNotes} onChange={e => setMyNotes(e.target.value)} placeholder="Write general notes for the candidate..." rows={3} />
                                 </div>
 
                                 {/* Verdict: Pass / Fail */}
                                 <div className={styles.verdictSection}>
-                                    <label>Kết quả đánh giá</label>
+                                    <label>Evaluation Result</label>
                                     <div className={styles.verdictBtns}>
                                         <button
                                             className={`${styles.verdictBtn} ${myVerdict === "pass" ? styles.verdictPass : ""}`}
                                             onClick={() => setMyVerdict(myVerdict === "pass" ? "" : "pass")}
                                         >
-                                            <ThumbsUp size={18} weight={myVerdict === "pass" ? "fill" : "regular"} /> Đạt
+                                            <ThumbsUp size={18} weight={myVerdict === "pass" ? "fill" : "regular"} /> Passed
                                         </button>
                                         <button
                                             className={`${styles.verdictBtn} ${myVerdict === "fail" ? styles.verdictFail : ""}`}
                                             onClick={() => setMyVerdict(myVerdict === "fail" ? "" : "fail")}
                                         >
-                                            <ThumbsDown size={18} weight={myVerdict === "fail" ? "fill" : "regular"} /> Không đạt
+                                            <ThumbsDown size={18} weight={myVerdict === "fail" ? "fill" : "regular"} /> Failed
                                         </button>
                                     </div>
                                 </div>
                                 <div className={styles.scoreActions}>
                                     <button className={styles.saveBtn} onClick={handleScore} disabled={saving}>
-                                        {saving ? "Đang lưu..." : <><FloppyDisk size={18} style={{ verticalAlign: 'middle', marginRight: 4 }} />Lưu tất cả điểm</>}
+                                        {saving ? "Saving..." : <><FloppyDisk size={18} style={{ verticalAlign: 'middle', marginRight: 4 }} />Save all scores</>}
                                     </button>
                                     {saveMsg && <span className={styles.saveMsg}>{saveMsg}</span>}
                                 </div>
@@ -480,20 +480,20 @@ export default function JudgePage() {
                                 {/* All judges' scores */}
                                 {subScores.length > 0 && (
                                     <div className={styles.allScores}>
-                                        <h4>Điểm từ các giám khảo</h4>
+                                        <h4>Scores from judges</h4>
                                         {subScores.map(sc => (
                                             <div key={sc.id} className={styles.scoreItem}>
                                                 <div>
-                                                    <strong>{sc.judges?.name || "GK"}</strong>
-                                                    {sc.judge_id === judge.id && <span className={styles.youBadge}>Bạn</span>}
+                                                    <strong>{sc.judges?.name || "Judge"}</strong>
+                                                    {sc.judge_id === judge.id && <span className={styles.youBadge}>You</span>}
                                                 </div>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                                    <span className={styles.scoreNum}>{sc.score} điểm</span>
+                                                    <span className={styles.scoreNum}>{sc.score} pts</span>
                                                     {(() => {
                                                         try {
                                                             const p = JSON.parse(sc.notes);
-                                                            if (p.verdict === "pass") return <span className={styles.verdictPassBadge}>Đạt</span>;
-                                                            if (p.verdict === "fail") return <span className={styles.verdictFailBadge}>Không đạt</span>;
+                                                            if (p.verdict === "pass") return <span className={styles.verdictPassBadge}>Passed</span>;
+                                                            if (p.verdict === "fail") return <span className={styles.verdictFailBadge}>Failed</span>;
                                                         } catch { /* no verdict */ }
                                                         return null;
                                                     })()}

@@ -19,10 +19,10 @@ interface Question {
 interface OptionItem { id: string; content: string; is_correct: boolean; }
 
 const Q_TYPES = [
-    { value: "single_choice", label: "Trắc nghiệm (1 đáp án)" },
-    { value: "multiple_choice", label: "Trắc nghiệm (nhiều đáp án)" },
-    { value: "true_false", label: "Đúng / Sai" },
-    { value: "short_answer", label: "Tự luận" },
+    { value: "single_choice", label: "Single Choice" },
+    { value: "multiple_choice", label: "Multiple Choice" },
+    { value: "true_false", label: "True / False" },
+    { value: "short_answer", label: "Essay" },
 ];
 
 export default function QuestionEditor() {
@@ -79,7 +79,7 @@ export default function QuestionEditor() {
     };
 
     const deleteGroup = async (id: string) => {
-        if (!confirm(`Xóa bộ đề "${id}" và toàn bộ câu hỏi bên trong?`)) return;
+        if (!confirm(`Delete test group "${id}" and all questions inside?`)) return;
         await supabase.from("test_groups").delete().eq("id", id);
         loadData();
     };
@@ -99,7 +99,7 @@ export default function QuestionEditor() {
     };
 
     const deleteQuestion = async (id: string) => {
-        if (!confirm("Xóa câu hỏi này?")) return;
+        if (!confirm("Delete this question?")) return;
         await supabase.from("questions").delete().eq("id", id);
         loadData();
     };
@@ -111,30 +111,30 @@ export default function QuestionEditor() {
 
     const typeLabel = (t: string) => Q_TYPES.find(x => x.value === t)?.label || t;
 
-    if (loading) return <div className={styles.emptyState}><p>Đang tải bộ đề...</p></div>;
+    if (loading) return <div className={styles.emptyState}><p>Loading question sets...</p></div>;
 
     return (
         <div>
             {/* Header */}
             <div className={styles.qeHeader}>
-                <h3><NotePencil size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Quản lý bộ đề thi ({groups.length} bộ)</h3>
-                <button className={styles.qeAddBtn} onClick={() => setShowNewGroup(true)}><Plus size={16} weight="bold" /> Thêm bộ đề</button>
+                <h3><NotePencil size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Manage Question Sets ({groups.length} sets)</h3>
+                <button className={styles.qeAddBtn} onClick={() => setShowNewGroup(true)}><Plus size={16} weight="bold" /> Add Question Set</button>
             </div>
 
             {/* New Group Form */}
             {showNewGroup && (
                 <div className={styles.qeFormCard}>
-                    <h4>Tạo bộ đề mới</h4>
+                    <h4>Create New Question Set</h4>
                     <div className={styles.qeFormGrid}>
                         <div><label>ID (slug)</label><input placeholder="finance, hr, etc." value={newGroup.id || ""} onChange={e => setNewGroup({ ...newGroup, id: e.target.value })} /></div>
-                        <div><label>Tiêu đề</label><input placeholder="Finance" value={newGroup.title || ""} onChange={e => setNewGroup({ ...newGroup, title: e.target.value })} /></div>
+                        <div><label>Title</label><input placeholder="Finance" value={newGroup.title || ""} onChange={e => setNewGroup({ ...newGroup, title: e.target.value })} /></div>
                         <div><label>Icon</label><input placeholder="💰" value={newGroup.icon || ""} onChange={e => setNewGroup({ ...newGroup, icon: e.target.value })} /></div>
-                        <div><label>Thời gian (phút)</label><input type="number" value={newGroup.duration_minutes || 25} onChange={e => setNewGroup({ ...newGroup, duration_minutes: parseInt(e.target.value) || 25 })} /></div>
+                        <div><label>Duration (minutes)</label><input type="number" value={newGroup.duration_minutes || 25} onChange={e => setNewGroup({ ...newGroup, duration_minutes: parseInt(e.target.value) || 25 })} /></div>
                     </div>
-                    <div><label>Mô tả</label><input style={{ width: "100%" }} placeholder="Mô tả ngắn về bộ đề" value={newGroup.description || ""} onChange={e => setNewGroup({ ...newGroup, description: e.target.value })} /></div>
+                    <div><label>Description</label><input style={{ width: "100%" }} placeholder="Short description of the test group" value={newGroup.description || ""} onChange={e => setNewGroup({ ...newGroup, description: e.target.value })} /></div>
                     <div className={styles.qeFormActions}>
-                        <button className={styles.qeSaveBtn} disabled={saving || !newGroup.id || !newGroup.title} onClick={() => saveGroup(newGroup, true)}>{saving ? "Đang lưu..." : "Tạo bộ đề"}</button>
-                        <button className={styles.qeCancelBtn} onClick={() => setShowNewGroup(false)}>Hủy</button>
+                        <button className={styles.qeSaveBtn} disabled={saving || !newGroup.id || !newGroup.title} onClick={() => saveGroup(newGroup, true)}>{saving ? "Saving..." : "Create Set"}</button>
+                        <button className={styles.qeCancelBtn} onClick={() => setShowNewGroup(false)}>Cancel</button>
                     </div>
                 </div>
             )}
@@ -152,9 +152,9 @@ export default function QuestionEditor() {
                                     <input value={editGroup.icon} onChange={e => setEditGroup({ ...editGroup, icon: e.target.value })} style={{ width: 50 }} onClick={e => e.stopPropagation()} />
                                     <input value={editGroup.title} onChange={e => setEditGroup({ ...editGroup, title: e.target.value })} style={{ flex: 1 }} onClick={e => e.stopPropagation()} />
                                     <input type="number" value={editGroup.duration_minutes} onChange={e => setEditGroup({ ...editGroup, duration_minutes: parseInt(e.target.value) || 25 })} style={{ width: 80 }} onClick={e => e.stopPropagation()} />
-                                    <span>phút</span>
-                                    <button className={styles.qeSaveBtn} disabled={saving} onClick={(e) => { e.stopPropagation(); saveGroup(editGroup, false); }}>Lưu</button>
-                                    <button className={styles.qeCancelBtn} onClick={(e) => { e.stopPropagation(); setEditGroup(null); }}>Hủy</button>
+                                    <span>min</span>
+                                    <button className={styles.qeSaveBtn} disabled={saving} onClick={(e) => { e.stopPropagation(); saveGroup(editGroup, false); }}>Save</button>
+                                    <button className={styles.qeCancelBtn} onClick={(e) => { e.stopPropagation(); setEditGroup(null); }}>Cancel</button>
                                 </div>
                             ) : (
                                 <>
@@ -164,12 +164,12 @@ export default function QuestionEditor() {
                                         </span>
                                         <span className={styles.qeGroupIcon}>{g.icon}</span>
                                         <h4>{g.title}</h4>
-                                        <span className={styles.qeGroupMeta}>{gqs.length} câu · {totalPts} điểm · {g.duration_minutes} phút</span>
-                                        {!g.is_active && <span className={styles.qeBadgeInactive}>Ẩn</span>}
+                                        <span className={styles.qeGroupMeta}>{gqs.length} questions · {totalPts} pts · {g.duration_minutes} min</span>
+                                        {!g.is_active && <span className={styles.qeBadgeInactive}>Hidden</span>}
                                     </div>
                                     <div className={styles.qeGroupActions}>
-                                        <button onClick={(e) => { e.stopPropagation(); setEditGroup({ ...g }); }} title="Sửa"><PencilSimple size={18} /></button>
-                                        <button onClick={(e) => { e.stopPropagation(); deleteGroup(g.id); }} title="Xóa"><Trash size={18} /></button>
+                                        <button onClick={(e) => { e.stopPropagation(); setEditGroup({ ...g }); }} title="Edit"><PencilSimple size={18} /></button>
+                                        <button onClick={(e) => { e.stopPropagation(); deleteGroup(g.id); }} title="Delete"><Trash size={18} /></button>
                                     </div>
                                 </>
                             )}
@@ -193,10 +193,10 @@ export default function QuestionEditor() {
                                                         <span className={styles.qeQType}>{typeLabel(q.type)}</span>
                                                         <span className={styles.qeQText}>{q.content}</span>
                                                     </div>
-                                                    <span className={styles.qeQPoints}>{q.points}đ</span>
+                                                    <span className={styles.qeQPoints}>{q.points}pts</span>
                                                     <div className={styles.qeQActions}>
-                                                        <button onClick={() => setEditQ({ ...q })} title="Sửa"><PencilSimple size={16} /></button>
-                                                        <button onClick={() => deleteQuestion(q.id)} title="Xóa"><X size={16} /></button>
+                                                        <button onClick={() => setEditQ({ ...q })} title="Edit"><PencilSimple size={16} /></button>
+                                                        <button onClick={() => deleteQuestion(q.id)} title="Delete"><X size={16} /></button>
                                                     </div>
                                                 </div>
                                             )}
@@ -214,7 +214,7 @@ export default function QuestionEditor() {
                                     </div>
                                 )}
                                 <button className={styles.qeAddQBtn} onClick={() => { setShowNewQ(true); setNewQ({ type: "single_choice", content: "", points: 10, correct_answer: "", options: [], sort_order: gqs.length + 1 }); }}>
-                                    <Plus size={14} weight="bold" /> Thêm câu hỏi
+                                    <Plus size={14} weight="bold" /> Add Question
                                 </button>
                             </>
                         )}
@@ -236,7 +236,7 @@ function QuestionForm({ q, setQ, saving, onSave, onCancel, addOption, removeOpti
     const opts = (q.options || []) as OptionItem[];
     const handleTypeChange = (type: string) => {
         if (type === "true_false") {
-            setQ({ ...q, type, options: [{ id: "tf-1", content: "Đúng", is_correct: true }, { id: "tf-2", content: "Sai", is_correct: false }], correct_answer: "true" });
+            setQ({ ...q, type, options: [{ id: "tf-1", content: "True", is_correct: true }, { id: "tf-2", content: "False", is_correct: false }], correct_answer: "true" });
         } else if (type === "short_answer") {
             setQ({ ...q, type, options: [] });
         } else {
@@ -248,28 +248,28 @@ function QuestionForm({ q, setQ, saving, onSave, onCancel, addOption, removeOpti
         <div className={styles.qeQForm}>
             <div className={styles.qeQFormRow}>
                 <div style={{ flex: "0 0 200px" }}>
-                    <label>Loại câu hỏi</label>
+                    <label>Question Type</label>
                     <select value={q.type} onChange={e => handleTypeChange(e.target.value)}>
                         {Q_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                     </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                    <label>Nội dung câu hỏi</label>
-                    <textarea value={q.content} onChange={e => setQ({ ...q, content: e.target.value })} placeholder="Nhập nội dung câu hỏi..." />
+                    <label>Question Content</label>
+                    <textarea value={q.content} onChange={e => setQ({ ...q, content: e.target.value })} placeholder="Enter question content..." />
                 </div>
                 <div style={{ flex: "0 0 80px" }}>
-                    <label>Điểm</label>
+                    <label>Points</label>
                     <input type="number" value={q.points} onChange={e => setQ({ ...q, points: parseInt(e.target.value) || 0 })} />
                 </div>
             </div>
 
             {/* Image upload */}
             <div className={styles.qeImageSection}>
-                <label><ImageSquare size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />Hình ảnh minh họa (tùy chọn)</label>
+                <label><ImageSquare size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />Illustrative Image (optional)</label>
                 {q.image_url ? (
                     <div className={styles.qeImagePreview}>
-                        <img src={q.image_url} alt="Minh họa" />
-                        <button onClick={() => setQ({ ...q, image_url: "" })} title="Xóa ảnh"><X size={14} /></button>
+                        <img src={q.image_url} alt="Illustration" />
+                        <button onClick={() => setQ({ ...q, image_url: "" })} title="Delete Image"><X size={14} /></button>
                     </div>
                 ) : (
                     <div className={styles.qeImageUpload}>
@@ -296,7 +296,7 @@ function QuestionForm({ q, setQ, saving, onSave, onCancel, addOption, removeOpti
             {/* Options for choice questions */}
             {(q.type === "single_choice" || q.type === "multiple_choice") && (
                 <div className={styles.qeOptions}>
-                    <label>Đáp án ({q.type === "multiple_choice" ? "chọn nhiều" : "chọn 1"})</label>
+                    <label>Answers ({q.type === "multiple_choice" ? "multiple choice" : "single choice"})</label>
                     {opts.map((opt, i) => (
                         <div key={i} className={styles.qeOptionRow}>
                             <input type={q.type === "multiple_choice" ? "checkbox" : "radio"} name={`opt-${q.id}`} checked={opt.is_correct}
@@ -310,7 +310,7 @@ function QuestionForm({ q, setQ, saving, onSave, onCancel, addOption, removeOpti
                                         setQ({ ...q, options: newOpts, correct_answer: JSON.stringify(correctArr) });
                                     }
                                 }} />
-                            <input className={styles.qeOptionInput} value={opt.content} placeholder={`Đáp án ${i + 1}`}
+                            <input className={styles.qeOptionInput} value={opt.content} placeholder={`Option ${i + 1}`}
                                 onChange={e => {
                                     const newOpts = updateOption(opts, i, "content", e.target.value);
                                     // Update correct_answer when text changes
@@ -326,21 +326,21 @@ function QuestionForm({ q, setQ, saving, onSave, onCancel, addOption, removeOpti
                             <button className={styles.qeOptDelete} onClick={() => setQ({ ...q, options: removeOption(opts, i) })}><X size={16} /></button>
                         </div>
                     ))}
-                    <button className={styles.qeAddOptBtn} onClick={() => setQ({ ...q, options: addOption(opts) })}><Plus size={14} /> Thêm đáp án</button>
+                    <button className={styles.qeAddOptBtn} onClick={() => setQ({ ...q, options: addOption(opts) })}><Plus size={14} /> Add option</button>
                 </div>
             )}
 
             {/* True/False options */}
             {q.type === "true_false" && (
                 <div className={styles.qeOptions}>
-                    <label>Đáp án đúng</label>
+                    <label>Correct Answer</label>
                     <div className={styles.qeTFRow}>
                         <label><input type="radio" name={`tf-${q.id}`} checked={q.correct_answer === "true"} onChange={() => {
-                            setQ({ ...q, correct_answer: "true", options: [{ id: "tf-1", content: "Đúng", is_correct: true }, { id: "tf-2", content: "Sai", is_correct: false }] });
-                        }} /> Đúng</label>
+                            setQ({ ...q, correct_answer: "true", options: [{ id: "tf-1", content: "True", is_correct: true }, { id: "tf-2", content: "False", is_correct: false }] });
+                        }} /> True</label>
                         <label><input type="radio" name={`tf-${q.id}`} checked={q.correct_answer === "false"} onChange={() => {
-                            setQ({ ...q, correct_answer: "false", options: [{ id: "tf-1", content: "Đúng", is_correct: false }, { id: "tf-2", content: "Sai", is_correct: true }] });
-                        }} /> Sai</label>
+                            setQ({ ...q, correct_answer: "false", options: [{ id: "tf-1", content: "True", is_correct: false }, { id: "tf-2", content: "False", is_correct: true }] });
+                        }} /> False</label>
                     </div>
                 </div>
             )}
@@ -348,14 +348,14 @@ function QuestionForm({ q, setQ, saving, onSave, onCancel, addOption, removeOpti
             {/* Short answer */}
             {q.type === "short_answer" && (
                 <div className={styles.qeOptions}>
-                    <label>Đáp án gợi ý (dùng để chấm tham khảo)</label>
-                    <textarea value={q.correct_answer} onChange={e => setQ({ ...q, correct_answer: e.target.value })} placeholder="Nhập từ khóa / đáp án mẫu..." />
+                    <label>Suggested Answer (for reference grading)</label>
+                    <textarea value={q.correct_answer} onChange={e => setQ({ ...q, correct_answer: e.target.value })} placeholder="Enter keywords / sample answer..." />
                 </div>
             )}
 
             <div className={styles.qeFormActions}>
-                <button className={styles.qeSaveBtn} disabled={saving || !q.content} onClick={onSave}>{saving ? "Đang lưu..." : "Lưu"}</button>
-                <button className={styles.qeCancelBtn} onClick={onCancel}>Hủy</button>
+                <button className={styles.qeSaveBtn} disabled={saving || !q.content} onClick={onSave}>{saving ? "Saving..." : "Save"}</button>
+                <button className={styles.qeCancelBtn} onClick={onCancel}>Cancel</button>
             </div>
         </div>
     );

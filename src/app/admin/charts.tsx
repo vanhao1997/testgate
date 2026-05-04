@@ -46,7 +46,7 @@ export function ScoreDistributionChart({ data }: { data: { range: string; count:
                 <XAxis dataKey="range" fontSize={12} />
                 <YAxis allowDecimals={false} fontSize={12} />
                 <Tooltip />
-                <Bar dataKey="count" name="Số bài" fill="#005951" radius={[6, 6, 0, 0] as any} />
+                <Bar dataKey="count" name="Count" fill="#005951" radius={[6, 6, 0, 0] as any} />
             </BarChart>
         </ResponsiveContainer>
     );
@@ -60,7 +60,7 @@ export function AvgByGroupChart({ data }: { data: { group: string; avg: number }
                 <XAxis dataKey="group" fontSize={12} />
                 <YAxis domain={[0, 100]} fontSize={12} />
                 <Tooltip />
-                <Bar dataKey="avg" name="TB (%)" fill="#FDDD29" radius={[6, 6, 0, 0] as any} />
+                <Bar dataKey="avg" name="Avg (%)" fill="#FDDD29" radius={[6, 6, 0, 0] as any} />
             </BarChart>
         </ResponsiveContainer>
     );
@@ -74,7 +74,7 @@ export function TimelineChart({ data }: { data: { date: string; count: number }[
                 <XAxis dataKey="date" fontSize={12} />
                 <YAxis allowDecimals={false} fontSize={12} />
                 <Tooltip />
-                <Line type="monotone" dataKey="count" name="Bài nộp" stroke="#005951" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="count" name="Submissions" stroke="#005951" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
             </LineChart>
         </ResponsiveContainer>
     );

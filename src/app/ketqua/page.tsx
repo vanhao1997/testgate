@@ -10,7 +10,7 @@ const PIN = "team2026";
 const GROUP_LABELS: Record<string, string> = {
     marketing: "Marketing",
     sales: "Sales",
-    technical: "Kỹ thuật",
+    technical: "Technical",
 };
 
 export default function KetQuaPage() {
@@ -25,7 +25,7 @@ export default function KetQuaPage() {
             setAuthed(true);
             loadResults();
         } else {
-            alert("Mã PIN không đúng!");
+            alert("Incorrect PIN!");
         }
     };
 
@@ -57,9 +57,9 @@ export default function KetQuaPage() {
     };
 
     const exportCSV = () => {
-        const header = "Họ tên,Email,SĐT,Bộ đề,Điểm,Tổng điểm,%,Đạt,Thời gian\n";
+        const header = "Full Name,Email,Phone,Track,Score,Total Points,%,Passed,Time\n";
         const rows = filtered.map((r) =>
-            `"${r.candidate_name}","${r.candidate_email}","${r.candidate_phone}","${GROUP_LABELS[r.test_group] || r.test_group}",${r.score},${r.total_points},${r.percentage}%,${r.passed ? "Đạt" : "Không"},"${new Date(r.submitted_at || "").toLocaleString("vi-VN")}"`
+            `"${r.candidate_name}","${r.candidate_email}","${r.candidate_phone}","${GROUP_LABELS[r.test_group] || r.test_group}",${r.score},${r.total_points},${r.percentage}%,${r.passed ? "Passed" : "Failed"},"${new Date(r.submitted_at || "").toLocaleString("en-US")}"`
         ).join("\n");
         const blob = new Blob(["\uFEFF" + header + rows], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
@@ -75,12 +75,12 @@ export default function KetQuaPage() {
             <div style={{ minHeight: "100dvh", background: "var(--color-bg-secondary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div className="card animate-fade-in-up" style={{ padding: "var(--space-2xl)", maxWidth: "400px", width: "100%", textAlign: "center" }}>
                     <img src="https://www.wilmar-agro.com.vn/_next/static/media/logo.ed31d771.webp" alt="Wilmar" style={{ height: 48, margin: "0 auto var(--space-lg)" }} />
-                    <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "var(--font-size-xl)", fontWeight: 700, marginBottom: "var(--space-xs)" }}>Kết quả ứng viên</h2>
+                    <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "var(--font-size-xl)", fontWeight: 700, marginBottom: "var(--space-xs)" }}>Candidate Results</h2>
                     <div className="gold-bar" style={{ margin: "0 auto var(--space-md)" }} />
-                    <p style={{ color: "var(--color-text-secondary)", fontSize: "var(--font-size-sm)", marginBottom: "var(--space-xl)", lineHeight: 1.6 }}>Nhập mã PIN nội bộ để xem bảng kết quả</p>
-                    <input className="form-input" type="password" placeholder="Nhập mã PIN" value={pinInput} onChange={(e) => setPinInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleAuth()} style={{ marginBottom: "var(--space-lg)", textAlign: "center", fontSize: "var(--font-size-lg)", letterSpacing: "0.2em" }} />
-                    <button className="btn btn-primary btn-lg" style={{ width: "100%" }} onClick={handleAuth}>Xem kết quả</button>
-                    <Link href="/" style={{ display: "block", marginTop: "var(--space-lg)", fontSize: "var(--font-size-sm)", color: "var(--color-text-tertiary)" }}>Quay lại trang chủ</Link>
+                    <p style={{ color: "var(--color-text-secondary)", fontSize: "var(--font-size-sm)", marginBottom: "var(--space-xl)", lineHeight: 1.6 }}>Enter internal PIN to view results table</p>
+                    <input className="form-input" type="password" placeholder="Enter PIN" value={pinInput} onChange={(e) => setPinInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleAuth()} style={{ marginBottom: "var(--space-lg)", textAlign: "center", fontSize: "var(--font-size-lg)", letterSpacing: "0.2em" }} />
+                    <button className="btn btn-primary btn-lg" style={{ width: "100%" }} onClick={handleAuth}>View results</button>
+                    <Link href="/" style={{ display: "block", marginTop: "var(--space-lg)", fontSize: "var(--font-size-sm)", color: "var(--color-text-tertiary)" }}>Return to homepage</Link>
                 </div>
             </div>
         );
@@ -96,7 +96,7 @@ export default function KetQuaPage() {
                     </Link>
                     <div style={{ display: "flex", gap: "var(--space-sm)", alignItems: "center" }}>
                         <button className="btn btn-secondary" onClick={loadResults} disabled={loading}>
-                            {loading ? "Đang tải..." : "Làm mới"}
+                            {loading ? "Loading..." : "Refresh"}
                         </button>
                         <button className="btn btn-primary" onClick={exportCSV}>
                             Export CSV
@@ -111,15 +111,15 @@ export default function KetQuaPage() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-md)", marginBottom: "var(--space-2xl)" }}>
                     <div className="card stagger" style={{ padding: "var(--space-lg)", textAlign: "center" }}>
                         <div style={{ fontFamily: "var(--font-heading)", fontSize: "var(--font-size-2xl)", fontWeight: 800 }}>{stats.total}</div>
-                        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", fontWeight: 500 }}>Tổng ứng viên</div>
+                        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", fontWeight: 500 }}>Total Candidates</div>
                     </div>
                     <div className="card stagger" style={{ padding: "var(--space-lg)", textAlign: "center" }}>
                         <div style={{ fontFamily: "var(--font-heading)", fontSize: "var(--font-size-2xl)", fontWeight: 800, color: "var(--color-success)" }}>{stats.passed}</div>
-                        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", fontWeight: 500 }}>Đạt yêu cầu</div>
+                        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", fontWeight: 500 }}>Passed Candidates</div>
                     </div>
                     <div className="card stagger" style={{ padding: "var(--space-lg)", textAlign: "center" }}>
                         <div style={{ fontFamily: "var(--font-heading)", fontSize: "var(--font-size-2xl)", fontWeight: 800, color: "var(--color-primary)" }}>{stats.avg}%</div>
-                        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", fontWeight: 500 }}>Điểm TB</div>
+                        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", fontWeight: 500 }}>Avg Score</div>
                     </div>
                     {["marketing", "sales", "technical"].map((g) => {
                         const s = groupStats(g);
@@ -129,7 +129,7 @@ export default function KetQuaPage() {
                                     {GROUP_LABELS[g]}
                                 </div>
                                 <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)" }}>
-                                    {s.count} · TB {s.avg}% · {s.passed} đạt
+                                    {s.count} · Avg {s.avg}% · {s.passed} passed
                                 </div>
                             </div>
                         );
@@ -138,7 +138,7 @@ export default function KetQuaPage() {
 
                 {/* Filter */}
                 <div style={{ display: "flex", gap: "var(--space-sm)", marginBottom: "var(--space-lg)", flexWrap: "wrap" }}>
-                    {[{ value: "all", label: "Tất cả" }, { value: "marketing", label: "Marketing" }, { value: "sales", label: "Sales" }, { value: "technical", label: "Kỹ thuật" }].map((f) => (
+                    {[{ value: "all", label: "All" }, { value: "marketing", label: "Marketing" }, { value: "sales", label: "Sales" }, { value: "technical", label: "Technical" }].map((f) => (
                         <button key={f.value} className={`btn ${filter === f.value ? "btn-primary" : "btn-secondary"}`} onClick={() => setFilter(f.value)} style={{ fontSize: "var(--font-size-sm)" }}>
                             {f.label} ({f.value !== "all" ? results.filter((r) => r.test_group === f.value).length : results.length})
                         </button>
@@ -152,16 +152,16 @@ export default function KetQuaPage() {
                             <thead>
                                 <tr style={{ borderBottom: "2px solid var(--color-border)", background: "var(--color-bg-secondary)" }}>
                                     <th style={{ padding: "var(--space-md)", textAlign: "left", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>#</th>
-                                    <th style={{ padding: "var(--space-md)", textAlign: "left", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Ứng viên</th>
-                                    <th style={{ padding: "var(--space-md)", textAlign: "left", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bộ đề</th>
-                                    <th style={{ padding: "var(--space-md)", textAlign: "center", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Điểm</th>
-                                    <th style={{ padding: "var(--space-md)", textAlign: "center", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Kết quả</th>
-                                    <th style={{ padding: "var(--space-md)", textAlign: "right", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Thời gian</th>
+                                    <th style={{ padding: "var(--space-md)", textAlign: "left", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Candidate</th>
+                                    <th style={{ padding: "var(--space-md)", textAlign: "left", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Track</th>
+                                    <th style={{ padding: "var(--space-md)", textAlign: "center", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Score</th>
+                                    <th style={{ padding: "var(--space-md)", textAlign: "center", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Result</th>
+                                    <th style={{ padding: "var(--space-md)", textAlign: "right", fontFamily: "var(--font-heading)", fontWeight: 600, color: "var(--color-text-tertiary)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Time</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filtered.length === 0 && (
-                                    <tr><td colSpan={6} style={{ padding: "var(--space-2xl)", textAlign: "center", color: "var(--color-text-tertiary)" }}>Chưa có kết quả nào</td></tr>
+                                    <tr><td colSpan={6} style={{ padding: "var(--space-2xl)", textAlign: "center", color: "var(--color-text-tertiary)" }}>No results found</td></tr>
                                 )}
                                 {filtered.map((r, i) => (
                                     <tr key={r.id} style={{ borderBottom: "1px solid var(--color-border)", transition: "background 150ms ease" }}>
@@ -178,10 +178,10 @@ export default function KetQuaPage() {
                                             <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", fontVariantNumeric: "tabular-nums" }}>{r.score}/{r.total_points}</div>
                                         </td>
                                         <td style={{ padding: "var(--space-md)", textAlign: "center" }}>
-                                            <span className={`badge ${r.passed ? "badge-accent" : "badge-danger"}`}>{r.passed ? "Đạt" : "Không đạt"}</span>
+                                            <span className={`badge ${r.passed ? "badge-accent" : "badge-danger"}`}>{r.passed ? "Passed" : "Failed"}</span>
                                         </td>
                                         <td style={{ padding: "var(--space-md)", textAlign: "right", fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", fontVariantNumeric: "tabular-nums" }}>
-                                            {r.submitted_at ? new Date(r.submitted_at).toLocaleString("vi-VN") : "-"}
+                                            {r.submitted_at ? new Date(r.submitted_at).toLocaleString("en-US") : "-"}
                                         </td>
                                     </tr>
                                 ))}

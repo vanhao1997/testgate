@@ -3,45 +3,15 @@
 import { useState, useEffect, useCallback, FormEvent } from "react";
 import Link from "next/link";
 import { supabase, sendToGoogleSheet } from "../../lib/supabase";
-import { ThemeToggle } from "../../components/ThemeToggle";
 import styles from "../test.module.css";
 import { NotePencil, Timer } from "@phosphor-icons/react";
 
 type AnswerMap = Record<string, string | string[]>;
 
 /* ==========================================
-   Dữ liệu bộ đề được tải từ Supabase
-   ========================================== */
-const ICON_CLASS_MAP: Record<string, string> = {
-    "finance": "group-icon-marketing",
-    "sc-planning": "group-icon-sales",
-    "sc-logistics": "group-icon-tech",
-};
-
-interface QuestionDef {
-    id: string;
-    type: "multiple_choice" | "single_choice" | "true_false" | "short_answer";
-    content: string;
-    points: number;
-    correct_answer: string | string[];
-    options?: { id: string; content: string; is_correct: boolean }[];
-    image_url?: string;
-}
-
-interface TestGroup {
-    id: string;
-    title: string;
-    description: string;
-    icon: string;
-    iconClass: string;
-    durationMinutes: number;
-    questions: QuestionDef[];
-}
-
-/* ==========================================
    Chấm điểm
    ========================================== */
-function gradeAnswers(group: TestGroup, answers: AnswerMap) {
+function gradeAnswers(group: any, answers: AnswerMap) {
     let totalScore = 0;
     let totalPoints = 0;
     const details: { qid: string; question: string; type: string; answer_text: string; correct: boolean; points: number; max_points: number }[] = [];
@@ -57,22 +27,11 @@ function gradeAnswers(group: TestGroup, answers: AnswerMap) {
             answerText = ans.join(", ");
         } else if (ans) {
             answerText = String(ans);
-        } else {
-            answerText = "(Chưa trả lời)";
+            answerText = "(Not answered)";
         }
 
-        if (q.type === "short_answer") {
-            const c = String(q.correct_answer).toLowerCase();
-            const r = String(ans || "").toLowerCase();
-            correct = r.length > 3 && (r.includes(c) || c.includes(r));
-        } else if (q.type === "multiple_choice") {
-            const correctOpts = q.options?.filter((o) => o.is_correct).map((o) => o.content).sort() || [];
-            const responseArr = (Array.isArray(ans) ? ans : []).sort();
-            correct = JSON.stringify(correctOpts) === JSON.stringify(responseArr);
-        } else {
-            const correctOpt = q.options?.find((o) => o.is_correct);
-            correct = correctOpt?.content === ans;
-        }
+        const correctOpt = q.options.find((o) => o.is_correct);
+        correct = correctOpt?.content === ans;
 
         if (correct) totalScore += q.points;
         details.push({ qid: q.id, question: q.content, type: q.type, answer_text: answerText, correct, points: correct ? q.points : 0, max_points: q.points });
@@ -90,53 +49,46 @@ export default function CandidateTestPage() {
     const [candidateEmail, setCandidateEmail] = useState("");
     const [candidatePhone, setCandidatePhone] = useState("");
     const [candidateId, setCandidateId] = useState("");
-    const [selectedGroup, setSelectedGroup] = useState<TestGroup | null>(null);
+    const [selectedGroup, setSelectedGroup] = useState<any | null>(null);
     const [answers, setAnswers] = useState<AnswerMap>({});
     const [timeLeft, setTimeLeft] = useState(0);
     const [totalTime, setTotalTime] = useState(0);
     const [saving, setSaving] = useState(false);
     const [showThankYou, setShowThankYou] = useState(false);
 
-    // === Load test groups from Supabase ===
-    const [testGroups, setTestGroups] = useState<TestGroup[]>([]);
-    const [loadingGroups, setLoadingGroups] = useState(true);
+    const [testGroups, setTestGroups] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchGroups() {
-            setLoadingGroups(true);
-            const { data: groups } = await supabase
-                .from("test_groups")
-                .select("*")
-                .eq("is_active", true)
-                .order("sort_order");
-            const { data: allQuestions } = await supabase
-                .from("questions")
-                .select("*")
-                .order("sort_order");
+            const { data: groups } = await supabase.from('test_groups').select('*').eq('is_active', true).order('sort_order');
+            const { data: questions } = await supabase.from('questions').select('*').order('sort_order');
+            
+            if (groups && questions) {
+                // Common questions shared across all groups (Q1-Q12)
+                const commonQuestions = questions.filter(q => q.group_id === 'common');
+                
+                const formattedGroups = groups.map(g => {
+                    // Merge common questions + group-specific questions
+                    const groupSpecific = questions.filter(q => q.group_id === g.id);
+                    const merged = [...commonQuestions, ...groupSpecific].sort((a, b) => a.sort_order - b.sort_order);
+                    
+                    let newDescription = g.description;
+                    if (g.title.includes('Finance') || g.title.includes('BPM')) newDescription = "Finance, budget management, cash flow, financial reporting";
+                    else if (g.title.includes('Strategic')) newDescription = "Strategic planning, market analysis, KPIs & sustainable growth";
+                    else if (g.title.includes('Logistics')) newDescription = "Supply chain management, warehousing, transport & inventory optimization";
 
-            if (groups && allQuestions) {
-                const mapped: TestGroup[] = groups.map((g: { id: string; title: string; description: string; icon: string; duration_minutes: number }) => ({
-                    id: g.id,
-                    title: g.title,
-                    description: g.description,
-                    icon: g.icon,
-                    iconClass: ICON_CLASS_MAP[g.id] || "group-icon-marketing",
-                    durationMinutes: g.duration_minutes,
-                    questions: allQuestions
-                        .filter((q: { group_id: string }) => q.group_id === g.id)
-                        .map((q: { id: string; type: string; content: string; points: number; correct_answer: string; options: { id: string; content: string; is_correct: boolean }[]; image_url?: string }) => ({
-                            id: q.id,
-                            type: q.type as QuestionDef["type"],
-                            content: q.content,
-                            points: q.points,
-                            correct_answer: q.type === "multiple_choice" ? (() => { try { return JSON.parse(q.correct_answer); } catch { return q.correct_answer; } })() : q.correct_answer,
-                            options: q.options || [],
-                            image_url: q.image_url || undefined,
-                        })),
-                }));
-                setTestGroups(mapped);
+                    return {
+                        ...g,
+                        description: newDescription,
+                        durationMinutes: g.duration_minutes,
+                        iconClass: 'group-icon-marketing',
+                        questions: merged,
+                    };
+                });
+                setTestGroups(formattedGroups);
             }
-            setLoadingGroups(false);
+            setLoading(false);
         }
         fetchGroups();
     }, []);
@@ -151,7 +103,7 @@ export default function CandidateTestPage() {
             });
         }, 1000);
         return () => clearInterval(timer);
-    }, [phase, timeLeft]);
+    }, [phase]);
 
     // Auto-submit
     const handleSubmit = useCallback(async () => {
@@ -171,9 +123,11 @@ export default function CandidateTestPage() {
             } else if (ans) {
                 answerText = String(ans);
             } else {
-                answerText = "(Chưa trả lời)";
+                answerText = "(Not answered)";
             }
-            return { question: q.content, answer: answerText };
+            const correctOpt = q.options.find((o) => o.is_correct);
+            const isCorrect = correctOpt?.content === ans;
+            return { question: q.content, answer: answerText, correct: isCorrect, points: isCorrect ? q.points : 0, max_points: q.points };
         });
 
         // Save to Supabase + Google Sheets (score is saved for judges, NOT shown to candidate)
@@ -214,10 +168,6 @@ export default function CandidateTestPage() {
 
     const handleSelectOption = (qId: string, qType: string, optContent: string) => {
         setAnswers((prev) => {
-            if (qType === "multiple_choice") {
-                const cur = (prev[qId] as string[]) || [];
-                return { ...prev, [qId]: cur.includes(optContent) ? cur.filter((c) => c !== optContent) : [...cur, optContent] };
-            }
             return { ...prev, [qId]: optContent };
         });
     };
@@ -225,7 +175,7 @@ export default function CandidateTestPage() {
     const isSelected = (qId: string, qType: string, optContent: string) => {
         const a = answers[qId];
         if (!a) return false;
-        return qType === "multiple_choice" ? (a as string[]).includes(optContent) : a === optContent;
+        return a === optContent;
     };
 
     const questions = selectedGroup?.questions || [];
@@ -247,36 +197,38 @@ export default function CandidateTestPage() {
                     <div className={`card ${styles["test-entry-card"]}`}>
                         <div className={styles["test-entry-header"]}>
                             <h1>W-Future Leader</h1>
-                            <p>Production Trainee Season 2 — Bài test sàng lọc ứng viên</p>
+                            <p>Management Trainee 2026 — Aptitude Test</p>
                         </div>
                         <div className={styles["test-info-grid"]}>
                             <div className={styles["test-info-item"]}>
-                                <div className={styles["test-info-value"]}>{loadingGroups ? "..." : `${testGroups.length} bộ đề`}</div>
-                                <div className={styles["test-info-label"]}>{testGroups.map(g => g.title).join(" · ") || "Đang tải..."}</div>
+                                <div className={styles["test-info-value"]}>{`${testGroups.length} tracks`}</div>
+                                <div className={styles["test-info-label"]}>{testGroups.map(g => g.title).join(" · ")}</div>
                             </div>
                             <div className={styles["test-info-item"]}>
-                                <div className={styles["test-info-value"]}>20–25 phút</div>
-                                <div className={styles["test-info-label"]}>mỗi bộ đề</div>
+                                <div className={styles["test-info-value"]}>30 mins</div>
+                                <div className={styles["test-info-label"]}>per track • 15 questions</div>
                             </div>
                         </div>
-                        <form onSubmit={handleEntry} style={{ display: "flex", flexDirection: "column", gap: "var(--space-lg)" }}>
-                            <div className="form-group">
-                                <label className="form-label">Họ và tên *</label>
-                                <input className="form-input" placeholder="Nhập họ tên đầy đủ" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} required />
+                        <form onSubmit={handleEntry} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-lg)" }}>
+                            <div className="form-group" style={{ gridColumn: "span 2" }}>
+                                <label className="form-label">Full Name *</label>
+                                <input className="form-input" placeholder="Enter your full name" value={candidateName} onChange={(e) => setCandidateName(e.target.value)} required />
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Email *</label>
                                 <input type="email" className="form-input" placeholder="email@example.com" value={candidateEmail} onChange={(e) => setCandidateEmail(e.target.value)} required />
                             </div>
                             <div className="form-group">
-                                <label className="form-label">Số điện thoại</label>
+                                <label className="form-label">Phone Number</label>
                                 <input className="form-input" placeholder="0901234567" value={candidatePhone} onChange={(e) => setCandidatePhone(e.target.value)} />
                             </div>
-                            <div className="form-group">
-                                <label className="form-label">Số báo danh *</label>
-                                <input className="form-input" placeholder="Nhập số báo danh" value={candidateId} onChange={(e) => setCandidateId(e.target.value)} required />
+                            <div className="form-group" style={{ gridColumn: "span 2" }}>
+                                <label className="form-label">Candidate ID *</label>
+                                <input className="form-input" placeholder="Enter candidate ID" value={candidateId} onChange={(e) => setCandidateId(e.target.value)} required />
                             </div>
-                            <button type="submit" className="btn btn-primary btn-lg" style={{ width: "100%" }}>Tiếp tục chọn bộ đề →</button>
+                            <div style={{ gridColumn: "span 2" }}>
+                                <button type="submit" className="btn btn-primary btn-lg" style={{ width: "100%" }}>Continue to select track →</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -291,8 +243,8 @@ export default function CandidateTestPage() {
                 <Nav />
                 <div className={styles["group-selection"]}>
                     <div className={styles["group-selection-header"]}>
-                        <h2>Chọn bộ đề phù hợp</h2>
-                        <p>Xin chào <strong>{candidateName}</strong>, hãy chọn bộ đề phù hợp với vị trí ứng tuyển</p>
+                        <h2>Select your track</h2>
+                        <p>Hello <strong>{candidateName}</strong>, please select the track corresponding to your applied position</p>
                     </div>
                     <div className={styles["group-cards"]}>
                         {testGroups.map((g) => (
@@ -301,8 +253,8 @@ export default function CandidateTestPage() {
                                 <h3>{g.title}</h3>
                                 <p>{g.description}</p>
                                 <div className={styles["group-card-meta"]}>
-                                    <span><NotePencil size={16} style={{ verticalAlign: 'middle', marginRight: 2 }} />{g.questions.length} câu</span>
-                                    <span><Timer size={16} style={{ verticalAlign: 'middle', marginRight: 2 }} />{g.durationMinutes} phút</span>
+                                    <span><NotePencil size={16} style={{ verticalAlign: 'middle', marginRight: 2 }} />{g.questions.length} questions</span>
+                                    <span><Timer size={16} style={{ verticalAlign: 'middle', marginRight: 2 }} />{g.durationMinutes} mins</span>
                                 </div>
                             </div>
                         ))}
@@ -314,7 +266,7 @@ export default function CandidateTestPage() {
                             setTotalTime(selectedGroup.durationMinutes * 60);
                             setPhase("test");
                         }} style={{ opacity: selectedGroup ? 1 : 0.5, minWidth: "240px" }}>
-                            {selectedGroup ? `Bắt đầu bộ ${selectedGroup.title} →` : "Chọn một bộ đề để tiếp tục"}
+                            {selectedGroup ? `Start ${selectedGroup.title} track →` : "Select a track to continue"}
                         </button>
                     </div>
                 </div>
@@ -331,7 +283,7 @@ export default function CandidateTestPage() {
                         <img src="/wfl-logo.png" alt="W-Future Leader" style={{ height: 36, width: "auto" }} />
                     </Link>
                     <div className={styles["timer-container"]}>
-                        <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)" }}>Bộ: {selectedGroup?.title}</span>
+                        <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)" }}>Track: {selectedGroup?.title}</span>
                         <div className={`${styles["timer-box"]} ${timerState === "warning" ? styles["timer-box-warning"] : timerState === "danger" ? styles["timer-box-danger"] : ""}`}>
                             <span className={styles["timer-icon"]}><Timer size={18} /></span>{formatTime(timeLeft)}
                         </div>
@@ -344,8 +296,8 @@ export default function CandidateTestPage() {
                         <div className={styles["test-progress-fill"]} style={{ width: `${questions.length > 0 ? (answeredCount / questions.length) * 100 : 0}%` }}></div>
                     </div>
                     <div className={styles["test-progress-text"]}>
-                        <span>Đã trả lời: {answeredCount}/{questions.length}</span>
-                        <span>{selectedGroup?.title} • {questions.length} câu</span>
+                        <span>Answered: {answeredCount}/{questions.length}</span>
+                        <span>{selectedGroup?.title} • {questions.length} questions</span>
                     </div>
                 </div>
                 {questions.map((q, idx) => (
@@ -353,46 +305,33 @@ export default function CandidateTestPage() {
                         <div className={`card ${styles["test-question-card"]}`}>
                             <div className={styles["test-question-header"]}>
                                 <div className={styles["test-question-num"]}>{idx + 1}</div>
-                                <span className={`badge ${q.type === "multiple_choice" ? "badge-accent" : q.type === "true_false" ? "badge-warning" : q.type === "short_answer" ? "badge-danger" : "badge-primary"}`}>
-                                    {q.type === "single_choice" ? "Một đáp án" : q.type === "multiple_choice" ? "Nhiều đáp án" : q.type === "true_false" ? "Đúng/Sai" : "Tự luận"}
+                                <span className={`badge badge-primary`}>
+                                    Single choice
                                 </span>
-
                             </div>
-                            <div className={styles["test-question-text"]}>{q.content}</div>
+                            <div className={styles["test-question-text"]} style={{ whiteSpace: 'pre-line' }}>{q.content}</div>
                             {q.image_url && (
-                                <div className={styles["test-question-image"]}>
-                                    <img src={q.image_url} alt={`Minh họa câu ${idx + 1}`} />
+                                <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+                                    <img src={q.image_url} alt="Question illustration" style={{ maxWidth: "100%", borderRadius: "8px" }} />
                                 </div>
                             )}
-                            {q.type !== "short_answer" && q.options ? (
-                                <div className={styles["test-options"]}>
-                                    {q.options.map((opt) => (
-                                        <div key={opt.id} className={`${styles["test-option"]} ${isSelected(q.id, q.type, opt.content) ? styles["test-option-selected"] : ""}`} onClick={() => handleSelectOption(q.id, q.type, opt.content)}>
-                                            <div className={q.type === "multiple_choice" ? styles["test-option-checkbox"] : styles["test-option-radio"]}></div>
-                                            <span>{opt.content}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <textarea className={`form-input ${styles["test-short-answer"]}`} placeholder="Nhập câu trả lời của bạn..." value={(answers[q.id] as string) || ""} onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })} />
-                            )}
+                            <div className={styles["test-options"]}>
+                                {q.options.map((opt) => (
+                                    <div key={opt.id} className={`${styles["test-option"]} ${isSelected(q.id, q.type, opt.content) ? styles["test-option-selected"] : ""}`} onClick={() => handleSelectOption(q.id, q.type, opt.content)}>
+                                        <div className={styles["test-option-radio"]}></div>
+                                        <span>{opt.content}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 ))}
                 <div className={styles["test-submit-area"]}>
-                    <span style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-secondary)" }}>{answeredCount}/{questions.length} câu đã trả lời</span>
-                    <button className="btn btn-primary btn-lg" disabled={saving} onClick={() => handleSubmit()}>{saving ? "Đang nộp..." : "Nộp bài →"}</button>
+                    <span style={{ fontSize: "var(--font-size-sm)", color: "var(--color-text-secondary)" }}>{answeredCount}/{questions.length} questions answered</span>
+                    <button className="btn btn-primary btn-lg" disabled={saving} onClick={() => handleSubmit()}>{saving ? "Submitting..." : "Submit →"}</button>
                 </div>
             </div>
 
-            {/* Floating Timer */}
-            <div className={`${styles["floating-timer"]} ${timerState === "warning" ? styles["floating-timer-warning"] : timerState === "danger" ? styles["floating-timer-danger"] : ""}`}>
-                <div className={styles["floating-timer-label"]}>Thời gian</div>
-                <div className={`${styles["floating-timer-value"]} ${timerState === "warning" ? styles["floating-timer-value-warning"] : timerState === "danger" ? styles["floating-timer-value-danger"] : ""}`}>{formatTime(timeLeft)}</div>
-                <div className={styles["floating-timer-progress"]}>
-                    <div className={`${styles["floating-timer-progress-fill"]} ${timerState === "warning" ? styles["floating-timer-progress-fill-warning"] : timerState === "danger" ? styles["floating-timer-progress-fill-danger"] : styles["floating-timer-progress-fill-normal"]}`} style={{ width: `${timerProgress}%` }}></div>
-                </div>
-            </div>
 
             {/* Thank You Popup */}
             {showThankYou && (
@@ -413,13 +352,13 @@ export default function CandidateTestPage() {
                             style={{ height: 48, margin: "0 auto var(--space-lg)" }}
                         />
                         <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "var(--font-size-2xl)", fontWeight: 800, marginBottom: "var(--space-xs)", color: "var(--color-primary)" }}>
-                            Cảm ơn bạn!
+                            Thank you!
                         </h2>
                         <div className="gold-bar" style={{ margin: "0 auto var(--space-lg)" }} />
                         <p style={{ color: "var(--color-text-secondary)", fontSize: "var(--font-size-sm)", lineHeight: 1.8, marginBottom: "var(--space-xl)" }}>
-                            Bài làm của bạn đã được ghi nhận thành công.<br />
-                            Kết quả sẽ được <strong style={{ color: "var(--color-text-primary)" }}>ban giám khảo</strong> đánh giá<br />
-                            và gửi lại qua email trong thời gian sớm nhất.
+                            Your test has been successfully submitted.<br />
+                            The results will be evaluated by <strong style={{ color: "var(--color-text-primary)" }}>the jury</strong><br />
+                            and sent to your email shortly.
                         </p>
                         <div style={{
                             display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-md)",
@@ -428,18 +367,18 @@ export default function CandidateTestPage() {
                         }}>
                             <div>
                                 <div style={{ fontFamily: "var(--font-heading)", fontWeight: 600, fontSize: "var(--font-size-sm)" }}>{candidateName}</div>
-                                <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)" }}>Ứng viên</div>
+                                <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)" }}>Candidate</div>
                             </div>
                             <div>
                                 <div style={{ fontFamily: "var(--font-heading)", fontWeight: 600, fontSize: "var(--font-size-sm)" }}>{selectedGroup?.title}</div>
-                                <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)" }}>Bộ đề</div>
+                                <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)" }}>Track</div>
                             </div>
                         </div>
                         <p style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-tertiary)", marginBottom: "var(--space-lg)" }}>
                             W-Future Leader — Production Trainee Season 2
                         </p>
                         <Link href="/" className="btn btn-primary" style={{ width: "100%" }}>
-                            Quay lại trang chủ
+                            Return to homepage
                         </Link>
                     </div>
                 </div>
@@ -455,7 +394,6 @@ function Nav() {
                 <Link href="/" className={styles["test-logo"]}>
                     <img src="/wfl-logo.png" alt="W-Future Leader" style={{ height: 40, width: "auto" }} />
                 </Link>
-                <ThemeToggle />
             </div>
         </nav>
     );

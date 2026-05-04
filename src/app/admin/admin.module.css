@@ -1,15 +1,18 @@
 /* ========================================
    Admin Dashboard — Wilmar WFL
+   Synced with globals.css design system
    ======================================== */
 
 .adminPage {
     min-height: 100vh;
     background: var(--color-bg-secondary);
     font-family: var(--font-body);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
 }
 
 .adminNav {
-    background: var(--color-primary);
+    background: var(--gradient-hero);
     color: white;
     padding: 0.75rem 2rem;
     display: flex;
@@ -18,7 +21,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-lg);
 }
 
 .adminNavLeft {
@@ -32,9 +35,12 @@
 }
 
 .adminNavLeft h1 {
+    font-family: var(--font-heading);
     font-size: 1.1rem;
-    font-weight: 700;
+    font-weight: 800;
     margin: 0;
+    color: white;
+    letter-spacing: -0.01em;
 }
 
 .adminNavLeft span {
@@ -119,27 +125,36 @@
 }
 
 .statCard {
-    background: white;
-    border-radius: 12px;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
     padding: 1.25rem;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-    border: 1px solid var(--color-bg-tertiary);
+    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: all var(--transition-base);
+}
+
+.statCard:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
 }
 
 .statLabel {
-    font-size: 0.8rem;
+    font-family: var(--font-heading);
+    font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 0.4rem;
 }
 
 .statValue {
+    font-family: var(--font-heading);
     font-size: 1.8rem;
     font-weight: 800;
     color: var(--color-primary);
     line-height: 1;
+    letter-spacing: -0.02em;
 }
 
 .statSub {
@@ -193,10 +208,10 @@
 
 /* === Table === */
 .tableCard {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-    border: 1px solid var(--color-bg-tertiary);
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(0,0,0,0.05);
     overflow: hidden;
 }
 
@@ -637,10 +652,11 @@
 }
 
 .loginCard {
-    background: white;
-    border-radius: 16px;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-xl);
     padding: 2.5rem;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid rgba(0,0,0,0.05);
     width: 100%;
     max-width: 400px;
     text-align: center;
@@ -652,10 +668,12 @@
 }
 
 .loginCard h1 {
+    font-family: var(--font-heading);
     font-size: 1.3rem;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--color-text-primary);
     margin: 0 0 0.25rem 0;
+    letter-spacing: -0.01em;
 }
 
 .loginCard p {
@@ -685,14 +703,20 @@
 .loginBtn {
     width: 100%;
     padding: 12px;
-    background: var(--color-primary);
+    background: var(--gradient-primary);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-heading);
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 12px rgba(42, 138, 142, 0.2);
+}
+
+.loginBtn:active {
+    transform: scale(0.98);
 }
 
 .loginBtn:hover {

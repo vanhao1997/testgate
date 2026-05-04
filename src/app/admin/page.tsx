@@ -111,7 +111,7 @@ export default function AdminPage() {
     }, [selectedSub]);
 
     const handleLogin = () => {
-        if (pin === ADMIN_PIN) { setAuthed(true); setPinError(""); localStorage.setItem("admin_session", JSON.stringify({ ts: Date.now() })); } else { setPinError("Mã PIN không đúng"); }
+        if (pin === ADMIN_PIN) { setAuthed(true); setPinError(""); localStorage.setItem("admin_session", JSON.stringify({ ts: Date.now() })); } else { setPinError("Invalid PIN"); }
     };
 
     const handleScore = async () => {
@@ -132,7 +132,7 @@ export default function AdminPage() {
     };
 
     const handleDeleteJudge = async (id: string) => {
-        if (!confirm("Xóa giám khảo này?")) return;
+        if (!confirm("Delete this judge?")) return;
         await supabase.from("judges").delete().eq("id", id); loadData();
     };
 
@@ -142,32 +142,32 @@ export default function AdminPage() {
         const dataToExport = (o.filterGroup === "all" ? submissions : submissions.filter(s => s.test_group === o.filterGroup));
         const rows = dataToExport.map(s => {
             const base: Record<string, string | number | boolean> = {};
-            if (o.sbd) base["Số báo danh"] = s.candidate_id || "";
-            if (o.name) base["Họ tên"] = s.candidate_name;
+            if (o.sbd) base["Candidate ID"] = s.candidate_id || "";
+            if (o.name) base["Full Name"] = s.candidate_name;
             if (o.email) base["Email"] = s.candidate_email;
-            if (o.phone) base["SĐT"] = s.candidate_phone || "";
-            if (o.group) base["Nhóm thi"] = groupLabel(s.test_group);
-            if (o.score) base["Điểm"] = s.score;
-            if (o.total) base["Tổng điểm"] = s.total_points;
-            if (o.pct) base["Phần trăm (%)"] = s.percentage;
-            if (o.result) base["Kết quả"] = s.passed ? "Đạt" : "Chưa đạt";
-            if (o.time) base["Thời gian nộp"] = new Date(s.submitted_at).toLocaleString("vi-VN");
+            if (o.phone) base["Phone"] = s.candidate_phone || "";
+            if (o.group) base["Test Group"] = groupLabel(s.test_group);
+            if (o.score) base["Score"] = s.score;
+            if (o.total) base["Total Points"] = s.total_points;
+            if (o.pct) base["Percentage (%)"] = s.percentage;
+            if (o.result) base["Result"] = s.passed ? "Passed" : "Failed";
+            if (o.time) base["Submitted At"] = new Date(s.submitted_at).toLocaleString("en-US");
             if (o.answers) {
                 (s.answers || []).forEach((ans, idx) => {
-                    base[`Câu ${idx + 1}`] = ans.answer_text || (ans.correct ? "Đúng" : "Sai");
-                    base[`Điểm C${idx + 1}`] = ans.points;
+                    base[`Question ${idx + 1}`] = ans.answer_text || (ans.correct ? "Correct" : "Incorrect");
+                    base[`Points Q${idx + 1}`] = ans.points;
                 });
             }
             return base;
         });
         const ws = XLSX.utils.json_to_sheet(rows);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Kết quả thi");
+        XLSX.utils.book_append_sheet(wb, ws, "Test Results");
 
         if (o.judgeSheet) {
-            const judgeRows = judges.map(j => ({ "Họ tên": j.name, "Email": j.email, "Vai trò": j.role === "admin" ? "Admin" : "Giám khảo" }));
+            const judgeRows = judges.map(j => ({ "Full Name": j.name, "Email": j.email, "Role": j.role === "admin" ? "Admin" : "Judge" }));
             const ws2 = XLSX.utils.json_to_sheet(judgeRows);
-            XLSX.utils.book_append_sheet(wb, ws2, "Giám khảo");
+            XLSX.utils.book_append_sheet(wb, ws2, "Judges");
         }
 
         XLSX.writeFile(wb, `WFL_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
@@ -192,8 +192,8 @@ export default function AdminPage() {
     ].filter(d => d.value > 0);
 
     const passFailData = [
-        { name: "Đạt", value: submissions.filter(s => s.passed).length },
-        { name: "Chưa đạt", value: submissions.filter(s => !s.passed).length },
+        { name: "Passed", value: submissions.filter(s => s.passed).length },
+        { name: "Failed", value: submissions.filter(s => !s.passed).length },
     ];
 
     const scoreBuckets = [
@@ -215,7 +215,7 @@ export default function AdminPage() {
     ];
 
     const timelineMap: Record<string, number> = {};
-    submissions.forEach(s => { const d = new Date(s.submitted_at).toLocaleDateString("vi-VN"); timelineMap[d] = (timelineMap[d] || 0) + 1; });
+    submissions.forEach(s => { const d = new Date(s.submitted_at).toLocaleDateString("en-US"); timelineMap[d] = (timelineMap[d] || 0) + 1; });
     const timelineData = Object.entries(timelineMap).map(([date, count]) => ({ date, count })).reverse();
 
     // Filter
@@ -238,14 +238,14 @@ export default function AdminPage() {
                 <div className={styles.loginCard}>
                     <img src="/wfl-logo.png" alt="WFL" />
                     <h1>Admin Dashboard</h1>
-                    <p>Nhập mã PIN để truy cập hệ thống quản lý</p>
+                    <p>Enter PIN to access the admin system</p>
                     <div style={{ position: 'relative' }}>
                         <input className={styles.loginInput} type={showPin ? "text" : "password"} placeholder="••••••" value={pin} onChange={e => setPin(e.target.value)} onKeyDown={e => e.key === "Enter" && handleLogin()} style={{ paddingRight: 44 }} />
-                        <button onClick={() => setShowPin(!showPin)} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-tertiary)', padding: 4 }} title={showPin ? "Ẩn mật khẩu" : "Hiện mật khẩu"}>
+                        <button onClick={() => setShowPin(!showPin)} style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-tertiary)', padding: 4 }} title={showPin ? "Hide password" : "Show password"}>
                             {showPin ? <EyeSlash size={20} /> : <Eye size={20} />}
                         </button>
                     </div>
-                    <button className={styles.loginBtn} onClick={handleLogin}>Đăng nhập</button>
+                    <button className={styles.loginBtn} onClick={handleLogin}>Log In</button>
                     {pinError && <p className={styles.loginError}>{pinError}</p>}
                 </div>
             </div>
@@ -262,22 +262,22 @@ export default function AdminPage() {
                     <span>W-Future Leader</span>
                 </div>
                 <div className={styles.adminNavRight}>
-                    <button className={styles.exportBtn} onClick={() => setShowExport(true)}><DownloadSimple size={18} weight="bold" /> Tải Excel</button>
-                    <button onClick={() => { setAuthed(false); setPin(""); localStorage.removeItem("admin_session"); }}>Đăng xuất</button>
+                    <button className={styles.exportBtn} onClick={() => setShowExport(true)}><DownloadSimple size={18} weight="bold" /> Export Excel</button>
+                    <button onClick={() => { setAuthed(false); setPin(""); localStorage.removeItem("admin_session"); }}>Log Out</button>
                 </div>
             </div>
 
             <div className={styles.tabs}>
-                <button className={`${styles.tab} ${activeTab === "dashboard" ? styles.tabActive : ""}`} onClick={() => setActiveTab("dashboard")}><ChartPie size={18} /> Tổng quan</button>
-                <button className={`${styles.tab} ${activeTab === "submissions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("submissions")}><ClipboardText size={18} /> Bài nộp</button>
-                <button className={`${styles.tab} ${activeTab === "judges" ? styles.tabActive : ""}`} onClick={() => setActiveTab("judges")}><Gavel size={18} /> Giám khảo</button>
-                <button className={`${styles.tab} ${activeTab === "questions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("questions")}><NotePencil size={18} /> Bộ đề</button>
-                <button className={`${styles.tab} ${activeTab === "guide" ? styles.tabActive : ""}`} onClick={() => setActiveTab("guide")}><Info size={18} /> Hướng dẫn</button>
+                <button className={`${styles.tab} ${activeTab === "dashboard" ? styles.tabActive : ""}`} onClick={() => setActiveTab("dashboard")}><ChartPie size={18} /> Overview</button>
+                <button className={`${styles.tab} ${activeTab === "submissions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("submissions")}><ClipboardText size={18} /> Submissions</button>
+                <button className={`${styles.tab} ${activeTab === "judges" ? styles.tabActive : ""}`} onClick={() => setActiveTab("judges")}><Gavel size={18} /> Judges</button>
+                <button className={`${styles.tab} ${activeTab === "questions" ? styles.tabActive : ""}`} onClick={() => setActiveTab("questions")}><NotePencil size={18} /> Question Sets</button>
+                <button className={`${styles.tab} ${activeTab === "guide" ? styles.tabActive : ""}`} onClick={() => setActiveTab("guide")}><Info size={18} /> Guide</button>
             </div>
 
             <div className={styles.content}>
                 {loading ? (
-                    <div className={styles.emptyState}><p>Đang tải dữ liệu...</p></div>
+                    <div className={styles.emptyState}><p>Loading data...</p></div>
                 ) : (
                     <>
                         {/* ====== DASHBOARD ====== */}
@@ -285,37 +285,37 @@ export default function AdminPage() {
                             <>
                                 <div className={styles.statsGrid}>
                                     <div className={styles.statCard}>
-                                        <div className={styles.statLabel}>Tổng bài nộp</div>
+                                        <div className={styles.statLabel}>Total Submissions</div>
                                         <div className={styles.statValue}>{totalSubs}</div>
-                                        <div className={styles.statSub}>ứng viên đã thi</div>
+                                        <div className={styles.statSub}>candidates took the test</div>
                                     </div>
                                     <div className={styles.statCard}>
-                                        <div className={styles.statLabel}>Điểm trung bình</div>
+                                        <div className={styles.statLabel}>Average Score</div>
                                         <div className={styles.statValue}>{avgPct}%</div>
-                                        <div className={styles.statSub}>trung bình % đạt</div>
+                                        <div className={styles.statSub}>average %</div>
                                     </div>
                                     <div className={styles.statCard}>
-                                        <div className={styles.statLabel}>Tỷ lệ đạt</div>
+                                        <div className={styles.statLabel}>Pass Rate</div>
                                         <div className={styles.statValue}>{passRate}%</div>
-                                        <div className={styles.statSub}>≥ 70% đạt chuẩn</div>
+                                        <div className={styles.statSub}>≥ 70% to pass</div>
                                     </div>
                                     <div className={styles.statCard}>
-                                        <div className={styles.statLabel}>Giám khảo</div>
+                                        <div className={styles.statLabel}>Judges</div>
                                         <div className={styles.statValue}>{judges.length}</div>
-                                        <div className={styles.statSub}>người đang hoạt động</div>
+                                        <div className={styles.statSub}>active users</div>
                                     </div>
                                 </div>
 
                                 {/* Charts Row 1: Pie charts */}
                                 <div className={styles.chartsRow}>
                                     <div className={styles.chartCard}>
-                                        <h3><ChartPie size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Phân bổ theo nhóm thi</h3>
+                                        <h3><ChartPie size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Distribution by Test Group</h3>
                                         <div className={styles.chartWrap}>
                                             <GroupPieChart data={pieData} />
                                         </div>
                                     </div>
                                     <div className={styles.chartCard}>
-                                        <h3><CheckCircle size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Tỷ lệ Đạt / Chưa đạt</h3>
+                                        <h3><CheckCircle size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Pass / Fail Ratio</h3>
                                         <div className={styles.chartWrap}>
                                             <PassFailPieChart data={passFailData} />
                                         </div>
@@ -325,13 +325,13 @@ export default function AdminPage() {
                                 {/* Charts Row 2: Bar charts */}
                                 <div className={styles.chartsRow}>
                                     <div className={styles.chartCard}>
-                                        <h3><ChartBar size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Phân bổ điểm số</h3>
+                                        <h3><ChartBar size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Score Distribution</h3>
                                         <div className={styles.chartWrap}>
                                             <ScoreDistributionChart data={scoreBuckets} />
                                         </div>
                                     </div>
                                     <div className={styles.chartCard}>
-                                        <h3><Trophy size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Điểm trung bình theo nhóm</h3>
+                                        <h3><Trophy size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Average Score by Group</h3>
                                         <div className={styles.chartWrap}>
                                             <AvgByGroupChart data={avgByGroup} />
                                         </div>
@@ -341,7 +341,7 @@ export default function AdminPage() {
                                 {/* Timeline */}
                                 {timelineData.length > 1 && (
                                     <div className={styles.chartCardFull}>
-                                        <h3>📅 Số bài nộp theo ngày</h3>
+                                        <h3>📅 Submissions by Date</h3>
                                         <div className={styles.chartWrap}>
                                             <TimelineChart data={timelineData} />
                                         </div>
@@ -350,9 +350,9 @@ export default function AdminPage() {
 
                                 {/* Recent submissions */}
                                 <div className={styles.tableCard} style={{ marginTop: "1rem" }}>
-                                    <div className={styles.tableHeader}><h3>Bài nộp gần đây</h3></div>
+                                    <div className={styles.tableHeader}><h3>Recent Submissions</h3></div>
                                     <table className={styles.dataTable}>
-                                        <thead><tr><th>SBD</th><th>Họ tên</th><th>Nhóm</th><th>Điểm</th><th>%</th><th>Thời gian</th></tr></thead>
+                                        <thead><tr><th>ID</th><th>Full Name</th><th>Group</th><th>Score</th><th>%</th><th>Time</th></tr></thead>
                                         <tbody>
                                             {submissions.slice(0, 5).map(s => (
                                                 <tr key={s.id} onClick={() => { setSelectedSub(s); setScoreInput(""); setNotesInput(""); }}>
@@ -361,7 +361,7 @@ export default function AdminPage() {
                                                     <td><span className={`${styles.badge} ${groupBadge(s.test_group)}`}>{groupLabel(s.test_group)}</span></td>
                                                     <td>{s.score}/{s.total_points}</td>
                                                     <td>{s.percentage}%</td>
-                                                    <td>{new Date(s.submitted_at).toLocaleString("vi-VN")}</td>
+                                                    <td>{new Date(s.submitted_at).toLocaleString("en-US")}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -374,11 +374,11 @@ export default function AdminPage() {
                         {activeTab === "submissions" && (
                             <div className={styles.tableCard}>
                                 <div className={styles.tableHeader}>
-                                    <h3>Tất cả bài nộp ({filtered.length})</h3>
+                                    <h3>All Submissions ({filtered.length})</h3>
                                     <div className={styles.filters}>
-                                        <input className={styles.filterInput} placeholder="Tìm tên, email, SBD..." value={searchText} onChange={e => setSearchText(e.target.value)} />
+                                        <input className={styles.filterInput} placeholder="Search name, email, ID..." value={searchText} onChange={e => setSearchText(e.target.value)} />
                                         <select className={styles.filterSelect} value={filterGroup} onChange={e => setFilterGroup(e.target.value)}>
-                                            <option value="all">Tất cả nhóm</option>
+                                            <option value="all">All Groups</option>
                                             <option value="finance">Finance</option>
                                             <option value="sc-planning">SC Planning</option>
                                             <option value="sc-logistics">SC Logistics</option>
@@ -387,10 +387,10 @@ export default function AdminPage() {
                                     </div>
                                 </div>
                                 <table className={styles.dataTable}>
-                                    <thead><tr><th>SBD</th><th>Họ tên</th><th>Email</th><th>Nhóm</th><th>Điểm</th><th>%</th><th>Kết quả</th><th>Thời gian</th></tr></thead>
+                                    <thead><tr><th>ID</th><th>Full Name</th><th>Email</th><th>Group</th><th>Score</th><th>%</th><th>Result</th><th>Time</th></tr></thead>
                                     <tbody>
                                         {filtered.length === 0 ? (
-                                            <tr><td colSpan={8} style={{ textAlign: "center", padding: "2rem", color: "#94a3b8" }}>Không có bài nộp nào</td></tr>
+                                            <tr><td colSpan={8} style={{ textAlign: "center", padding: "2rem", color: "#94a3b8" }}>No submissions found</td></tr>
                                         ) : filtered.map(s => (
                                             <tr key={s.id} onClick={() => { setSelectedSub(s); setScoreInput(""); setNotesInput(""); }}>
                                                 <td>{s.candidate_id || "—"}</td>
@@ -399,8 +399,8 @@ export default function AdminPage() {
                                                 <td><span className={`${styles.badge} ${groupBadge(s.test_group)}`}>{groupLabel(s.test_group)}</span></td>
                                                 <td>{s.score}/{s.total_points}</td>
                                                 <td>{s.percentage}%</td>
-                                                <td><span className={`${styles.badge} ${s.passed ? styles.badgeGraded : styles.badgePending}`}>{s.passed ? "Đạt" : "Chưa đạt"}</span></td>
-                                                <td>{new Date(s.submitted_at).toLocaleString("vi-VN")}</td>
+                                                <td><span className={`${styles.badge} ${s.passed ? styles.badgeGraded : styles.badgePending}`}>{s.passed ? "Passed" : "Failed"}</span></td>
+                                                <td>{new Date(s.submitted_at).toLocaleString("en-US")}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -412,22 +412,22 @@ export default function AdminPage() {
                         {activeTab === "judges" && (
                             <>
                                 <div className={styles.addJudgeForm}>
-                                    <h3>➕ Thêm giám khảo mới</h3>
+                                    <h3>➕ Add New Judge</h3>
                                     <div className={styles.addJudgeFields}>
-                                        <div className="field"><label>Họ tên</label><input placeholder="Nhập họ tên" value={newJudgeName} onChange={e => setNewJudgeName(e.target.value)} /></div>
+                                        <div className="field"><label>Full Name</label><input placeholder="Enter full name" value={newJudgeName} onChange={e => setNewJudgeName(e.target.value)} /></div>
                                         <div className="field"><label>Email</label><input type="email" placeholder="email@wilmar.com" value={newJudgeEmail} onChange={e => setNewJudgeEmail(e.target.value)} /></div>
-                                        <div className="field"><label>Vai trò</label><select value={newJudgeRole} onChange={e => setNewJudgeRole(e.target.value)}><option value="judge">Giám khảo</option><option value="admin">Admin</option></select></div>
-                                        <button onClick={handleAddJudge}>Thêm</button>
+                                        <div className="field"><label>Role</label><select value={newJudgeRole} onChange={e => setNewJudgeRole(e.target.value)}><option value="judge">Judge</option><option value="admin">Admin</option></select></div>
+                                        <button onClick={handleAddJudge}>Add</button>
                                     </div>
                                 </div>
                                 <div className={styles.judgeGrid}>
                                     {judges.map(j => (
                                         <div key={j.id} className={styles.judgeCard}>
                                             <div className={styles.judgeInfo}>
-                                                <h4>{j.name} <span className={`${styles.judgeRole} ${j.role === "admin" ? styles.roleAdmin : styles.roleJudge}`}>{j.role === "admin" ? "Admin" : "Giám khảo"}</span></h4>
+                                                <h4>{j.name} <span className={`${styles.judgeRole} ${j.role === "admin" ? styles.roleAdmin : styles.roleJudge}`}>{j.role === "admin" ? "Admin" : "Judge"}</span></h4>
                                                 <p>{j.email}</p>
                                             </div>
-                                            <button className={styles.deleteJudge} onClick={() => handleDeleteJudge(j.id)} title="Xóa"><X size={16} /></button>
+                                            <button className={styles.deleteJudge} onClick={() => handleDeleteJudge(j.id)} title="Delete"><X size={16} /></button>
                                         </div>
                                     ))}
                                 </div>
@@ -446,47 +446,47 @@ export default function AdminPage() {
                 <div className={styles.detailOverlay} onClick={() => setSelectedSub(null)}>
                     <div className={styles.detailPanel} onClick={e => e.stopPropagation()}>
                         <div className={styles.detailHeader}>
-                            <h2>Chi tiết bài nộp</h2>
+                            <h2>Submission Details</h2>
                             <button className={styles.closeBtn} onClick={() => setSelectedSub(null)}><X size={20} /></button>
                         </div>
                         <div className={styles.detailBody}>
                             <div className={styles.candidateInfo}>
-                                <div className={styles.infoItem}><label>SBD</label><span>{selectedSub.candidate_id || "—"}</span></div>
-                                <div className={styles.infoItem}><label>Họ tên</label><span>{selectedSub.candidate_name}</span></div>
+                                <div className={styles.infoItem}><label>ID</label><span>{selectedSub.candidate_id || "—"}</span></div>
+                                <div className={styles.infoItem}><label>Full Name</label><span>{selectedSub.candidate_name}</span></div>
                                 <div className={styles.infoItem}><label>Email</label><span>{selectedSub.candidate_email}</span></div>
-                                <div className={styles.infoItem}><label>SĐT</label><span>{selectedSub.candidate_phone || "—"}</span></div>
-                                <div className={styles.infoItem}><label>Nhóm thi</label><span className={`${styles.badge} ${groupBadge(selectedSub.test_group)}`}>{groupLabel(selectedSub.test_group)}</span></div>
-                                <div className={styles.infoItem}><label>Điểm tự động</label><span>{selectedSub.score}/{selectedSub.total_points} ({selectedSub.percentage}%)</span></div>
+                                <div className={styles.infoItem}><label>Phone</label><span>{selectedSub.candidate_phone || "—"}</span></div>
+                                <div className={styles.infoItem}><label>Test Group</label><span className={`${styles.badge} ${groupBadge(selectedSub.test_group)}`}>{groupLabel(selectedSub.test_group)}</span></div>
+                                <div className={styles.infoItem}><label>Auto Score</label><span>{selectedSub.score}/{selectedSub.total_points} ({selectedSub.percentage}%)</span></div>
                             </div>
 
                             <div className={styles.answersSection}>
-                                <h3><PencilSimple size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />Câu trả lời ({(selectedSub.answers || []).length} câu)</h3>
+                                <h3><PencilSimple size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />Answers ({(selectedSub.answers || []).length} questions)</h3>
                                 {(selectedSub.answers || []).map((a, idx) => (
                                     <div key={idx} className={styles.answerItem}>
-                                        <div className={styles.answerQuestion}>Câu {idx + 1}: {a.question || `Câu hỏi #${idx + 1}`}</div>
-                                        {a.answer_text && <div className={styles.answerTextBox}><strong>Trả lời:</strong> {a.answer_text}</div>}
+                                        <div className={styles.answerQuestion}>Question {idx + 1}: {a.question || `Question #${idx + 1}`}</div>
+                                        {a.answer_text && <div className={styles.answerTextBox}><strong>Answer:</strong> {a.answer_text}</div>}
                                         <div className={a.correct ? styles.answerCorrect : styles.answerWrong}>
-                                            {a.correct ? <CheckCircle size={16} color="#16a34a" weight="fill" /> : <XCircle size={16} color="#ef4444" weight="fill" />} {a.points ?? 0}/{a.max_points || "?"} điểm
+                                            {a.correct ? <CheckCircle size={16} color="#16a34a" weight="fill" /> : <XCircle size={16} color="#ef4444" weight="fill" />} {a.points ?? 0}/{a.max_points || "?"} points
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
                             <div className={styles.scoreForm}>
-                                <h3>⭐ Chấm điểm giám khảo</h3>
+                                <h3>⭐ Judge Scoring</h3>
                                 <div className={styles.scoreInputGroup}>
-                                    <div style={{ flex: "0 0 120px" }}><label>Điểm (0-100)</label><input type="number" min="0" max="100" value={scoreInput} onChange={e => setScoreInput(e.target.value)} placeholder="0" /></div>
-                                    <div style={{ flex: 1 }}><label>Nhận xét</label><textarea value={notesInput} onChange={e => setNotesInput(e.target.value)} placeholder="Ghi chú nhận xét cho ứng viên..." /></div>
+                                    <div style={{ flex: "0 0 120px" }}><label>Score (0-100)</label><input type="number" min="0" max="100" value={scoreInput} onChange={e => setScoreInput(e.target.value)} placeholder="0" /></div>
+                                    <div style={{ flex: 1 }}><label>Notes</label><textarea value={notesInput} onChange={e => setNotesInput(e.target.value)} placeholder="Add notes for candidate..." /></div>
                                 </div>
                                 <div className={styles.scoreActions}>
-                                    <button className={`${styles.btnScore} ${styles.btnScorePrimary}`} onClick={handleScore} disabled={saving || !scoreInput}>{saving ? "Đang lưu..." : "Lưu điểm"}</button>
+                                    <button className={`${styles.btnScore} ${styles.btnScorePrimary}`} onClick={handleScore} disabled={saving || !scoreInput}>{saving ? "Saving..." : "Save Score"}</button>
                                 </div>
                                 {subScores.length > 0 && (
                                     <div className={styles.existingScores}>
-                                        <h4>Điểm đã chấm</h4>
+                                        <h4>Existing Scores</h4>
                                         {subScores.map(sc => (
                                             <div key={sc.id} className={styles.scoreEntry}>
-                                                <span><strong>{sc.judges?.name || "GK"}</strong>: {sc.score} điểm</span>
+                                                <span><strong>{sc.judges?.name || "Judge"}</strong>: {sc.score} points</span>
                                                 <span style={{ color: "#94a3b8", fontSize: "0.8rem" }}>{sc.notes || ""}</span>
                                             </div>
                                         ))}
@@ -503,15 +503,15 @@ export default function AdminPage() {
                 <div className={styles.detailOverlay} onClick={() => setShowExport(false)}>
                     <div className={styles.detailPanel} onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
                         <div className={styles.detailHeader}>
-                            <h2><Funnel size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Tùy chỉnh xuất Excel</h2>
+                            <h2><Funnel size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} />Custom Excel Export</h2>
                             <button className={styles.closeBtn} onClick={() => setShowExport(false)}><X size={20} /></button>
                         </div>
                         <div className={styles.detailBody} style={{ padding: "1.25rem" }}>
                             {/* Group filter */}
                             <div style={{ marginBottom: "1rem" }}>
-                                <label style={{ fontWeight: 600, fontSize: "0.82rem", display: "block", marginBottom: 4 }}>Lọc theo nhóm thi</label>
+                                <label style={{ fontWeight: 600, fontSize: "0.82rem", display: "block", marginBottom: 4 }}>Filter by Test Group</label>
                                 <select value={exportOpts.filterGroup} onChange={e => setExportOpts({ ...exportOpts, filterGroup: e.target.value })} style={{ width: "100%", padding: "7px 10px", borderRadius: 6, border: "1px solid var(--color-bg-tertiary)", fontSize: "0.85rem" }}>
-                                    <option value="all">Tất cả nhóm</option>
+                                    <option value="all">All Groups</option>
                                     <option value="finance">Finance</option>
                                     <option value="sc-planning">SC Planning</option>
                                     <option value="sc-logistics">SC Logistics</option>
@@ -521,48 +521,48 @@ export default function AdminPage() {
                             {/* Column checkboxes */}
                             <div style={{ marginBottom: "1rem" }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                                    <label style={{ fontWeight: 600, fontSize: "0.82rem" }}>Thông tin ứng viên</label>
+                                    <label style={{ fontWeight: 600, fontSize: "0.82rem" }}>Candidate Information</label>
                                     <div style={{ display: "flex", gap: 8 }}>
-                                        <button onClick={() => setExportOpts({ ...exportOpts, sbd: true, name: true, email: true, phone: true })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", fontWeight: 600 }}>Chọn tất cả</button>
-                                        <button onClick={() => setExportOpts({ ...exportOpts, sbd: false, name: false, email: false, phone: false })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontWeight: 600 }}>Bỏ chọn</button>
+                                        <button onClick={() => setExportOpts({ ...exportOpts, sbd: true, name: true, email: true, phone: true })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", fontWeight: 600 }}>Select All</button>
+                                        <button onClick={() => setExportOpts({ ...exportOpts, sbd: false, name: false, email: false, phone: false })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontWeight: 600 }}>Deselect All</button>
                                     </div>
                                 </div>
                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 16px" }}>
-                                    <ExportCheck label="Số báo danh" checked={exportOpts.sbd} onChange={v => setExportOpts({ ...exportOpts, sbd: v })} />
-                                    <ExportCheck label="Họ tên" checked={exportOpts.name} onChange={v => setExportOpts({ ...exportOpts, name: v })} />
+                                    <ExportCheck label="Candidate ID" checked={exportOpts.sbd} onChange={v => setExportOpts({ ...exportOpts, sbd: v })} />
+                                    <ExportCheck label="Full Name" checked={exportOpts.name} onChange={v => setExportOpts({ ...exportOpts, name: v })} />
                                     <ExportCheck label="Email" checked={exportOpts.email} onChange={v => setExportOpts({ ...exportOpts, email: v })} />
-                                    <ExportCheck label="Số điện thoại" checked={exportOpts.phone} onChange={v => setExportOpts({ ...exportOpts, phone: v })} />
+                                    <ExportCheck label="Phone Number" checked={exportOpts.phone} onChange={v => setExportOpts({ ...exportOpts, phone: v })} />
                                 </div>
                             </div>
 
                             <div style={{ marginBottom: "1rem" }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                                    <label style={{ fontWeight: 600, fontSize: "0.82rem" }}>Kết quả thi</label>
+                                    <label style={{ fontWeight: 600, fontSize: "0.82rem" }}>Test Results</label>
                                     <div style={{ display: "flex", gap: 8 }}>
-                                        <button onClick={() => setExportOpts({ ...exportOpts, group: true, score: true, total: true, pct: true, result: true, time: true })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", fontWeight: 600 }}>Chọn tất cả</button>
-                                        <button onClick={() => setExportOpts({ ...exportOpts, group: false, score: false, total: false, pct: false, result: false, time: false })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontWeight: 600 }}>Bỏ chọn</button>
+                                        <button onClick={() => setExportOpts({ ...exportOpts, group: true, score: true, total: true, pct: true, result: true, time: true })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", fontWeight: 600 }}>Select All</button>
+                                        <button onClick={() => setExportOpts({ ...exportOpts, group: false, score: false, total: false, pct: false, result: false, time: false })} style={{ fontSize: "0.72rem", background: "none", border: "none", color: "#94a3b8", cursor: "pointer", fontWeight: 600 }}>Deselect All</button>
                                     </div>
                                 </div>
                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 16px" }}>
-                                    <ExportCheck label="Nhóm thi" checked={exportOpts.group} onChange={v => setExportOpts({ ...exportOpts, group: v })} />
-                                    <ExportCheck label="Điểm" checked={exportOpts.score} onChange={v => setExportOpts({ ...exportOpts, score: v })} />
-                                    <ExportCheck label="Tổng điểm" checked={exportOpts.total} onChange={v => setExportOpts({ ...exportOpts, total: v })} />
-                                    <ExportCheck label="Phần trăm (%)" checked={exportOpts.pct} onChange={v => setExportOpts({ ...exportOpts, pct: v })} />
-                                    <ExportCheck label="Kết quả (Đạt/Chưa)" checked={exportOpts.result} onChange={v => setExportOpts({ ...exportOpts, result: v })} />
-                                    <ExportCheck label="Thời gian nộp" checked={exportOpts.time} onChange={v => setExportOpts({ ...exportOpts, time: v })} />
+                                    <ExportCheck label="Test Group" checked={exportOpts.group} onChange={v => setExportOpts({ ...exportOpts, group: v })} />
+                                    <ExportCheck label="Score" checked={exportOpts.score} onChange={v => setExportOpts({ ...exportOpts, score: v })} />
+                                    <ExportCheck label="Total Points" checked={exportOpts.total} onChange={v => setExportOpts({ ...exportOpts, total: v })} />
+                                    <ExportCheck label="Percentage (%)" checked={exportOpts.pct} onChange={v => setExportOpts({ ...exportOpts, pct: v })} />
+                                    <ExportCheck label="Result (Passed/Failed)" checked={exportOpts.result} onChange={v => setExportOpts({ ...exportOpts, result: v })} />
+                                    <ExportCheck label="Submitted Time" checked={exportOpts.time} onChange={v => setExportOpts({ ...exportOpts, time: v })} />
                                 </div>
                             </div>
 
                             <div style={{ marginBottom: "1.25rem" }}>
-                                <label style={{ fontWeight: 600, fontSize: "0.82rem", display: "block", marginBottom: 8 }}>Nội dung bổ sung</label>
-                                <ExportCheck label="Chi tiết câu trả lời từng câu" checked={exportOpts.answers} onChange={v => setExportOpts({ ...exportOpts, answers: v })} />
-                                <ExportCheck label="Sheet danh sách Giám khảo" checked={exportOpts.judgeSheet} onChange={v => setExportOpts({ ...exportOpts, judgeSheet: v })} />
+                                <label style={{ fontWeight: 600, fontSize: "0.82rem", display: "block", marginBottom: 8 }}>Additional Content</label>
+                                <ExportCheck label="Detailed answers for each question" checked={exportOpts.answers} onChange={v => setExportOpts({ ...exportOpts, answers: v })} />
+                                <ExportCheck label="Judges list sheet" checked={exportOpts.judgeSheet} onChange={v => setExportOpts({ ...exportOpts, judgeSheet: v })} />
                             </div>
 
                             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-                                <button onClick={() => setShowExport(false)} style={{ padding: "8px 20px", background: "var(--color-bg-tertiary)", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: "0.85rem" }}>Hủy</button>
+                                <button onClick={() => setShowExport(false)} style={{ padding: "8px 20px", background: "var(--color-bg-tertiary)", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: "0.85rem" }}>Cancel</button>
                                 <button onClick={exportToExcel} style={{ padding: "8px 24px", background: "var(--color-primary)", color: "white", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: "0.85rem", display: "flex", alignItems: "center", gap: 6 }}>
-                                    <DownloadSimple size={16} weight="bold" /> Tải xuống
+                                    <DownloadSimple size={16} weight="bold" /> Download
                                 </button>
                             </div>
                         </div>
