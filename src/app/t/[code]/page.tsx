@@ -16,7 +16,7 @@ function gradeAnswers(group: any, answers: AnswerMap) {
     let totalPoints = 0;
     const details: { qid: string; question: string; type: string; answer_text: string; correct: boolean; points: number; max_points: number }[] = [];
 
-    group.questions.forEach((q) => {
+    group.questions.forEach((q: any) => {
         totalPoints += q.points;
         const ans = answers[q.id];
         let correct = false;
@@ -27,10 +27,11 @@ function gradeAnswers(group: any, answers: AnswerMap) {
             answerText = ans.join(", ");
         } else if (ans) {
             answerText = String(ans);
+        } else {
             answerText = "(Not answered)";
         }
 
-        const correctOpt = q.options.find((o) => o.is_correct);
+        const correctOpt = q.options.find((o: any) => o.is_correct);
         correct = correctOpt?.content === ans;
 
         if (correct) totalScore += q.points;
@@ -66,12 +67,12 @@ export default function CandidateTestPage() {
             
             if (groups && questions) {
                 // Common questions shared across all groups (Q1-Q12)
-                const commonQuestions = questions.filter(q => q.group_id === 'common');
+                const commonQuestions = questions.filter((q: any) => q.group_id === 'common');
                 
-                const formattedGroups = groups.map(g => {
+                const formattedGroups = groups.map((g: any) => {
                     // Merge common questions + group-specific questions
-                    const groupSpecific = questions.filter(q => q.group_id === g.id);
-                    const merged = [...commonQuestions, ...groupSpecific].sort((a, b) => a.sort_order - b.sort_order);
+                    const groupSpecific = questions.filter((q: any) => q.group_id === g.id);
+                    const merged = [...commonQuestions, ...groupSpecific].sort((a: any, b: any) => a.sort_order - b.sort_order);
                     
                     let newDescription = g.description;
                     if (g.title.includes('Finance') || g.title.includes('BPM')) newDescription = "Finance, budget management, cash flow, financial reporting";
@@ -115,7 +116,7 @@ export default function CandidateTestPage() {
         const passed = pct >= 70;
 
         // Collect all answers with question text for judges
-        const allAnswers = selectedGroup.questions.map((q) => {
+        const allAnswers = selectedGroup.questions.map((q: any) => {
             const ans = answers[q.id];
             let answerText = "";
             if (Array.isArray(ans)) {
@@ -125,7 +126,7 @@ export default function CandidateTestPage() {
             } else {
                 answerText = "(Not answered)";
             }
-            const correctOpt = q.options.find((o) => o.is_correct);
+            const correctOpt = q.options.find((o: any) => o.is_correct);
             const isCorrect = correctOpt?.content === ans;
             return { question: q.content, answer: answerText, correct: isCorrect, points: isCorrect ? q.points : 0, max_points: q.points };
         });
