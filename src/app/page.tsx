@@ -10,7 +10,9 @@ export default function HomePage() {
       <nav className={styles.nav}>
         <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Link href="/" className={styles.logo}>
-            <img src="/wfl-logo.png" alt="W-Production Trainee" className={styles.logoImg} />
+            <img src="/wilmar.png" alt="Wilmar CLV" className={styles.logoImgWilmar} />
+            <span className={styles.logoDivider} />
+            <img src="/wfl-logo.png" alt="W-Future Leader" className={styles.logoImg} />
           </Link>
           <div className={styles.navRight}>
             <span className={styles.navLabel}>W-Future Leader 2026</span>
@@ -34,8 +36,8 @@ export default function HomePage() {
             
             <div className={styles.heroActions}>
               <Link href="/t/test" className={styles.applyBtn}>
-                <span className={styles.applyText}>APPLY NOW</span>
-                <span className={styles.applyDate}>15/04/2026 – 04/05/2026</span>
+                <span className={styles.applyText}>START ASSESSMENT</span>
+                <span className={styles.applyDate}>Begin Your Journey Here</span>
               </Link>
             </div>
           </div>

@@ -79,11 +79,17 @@ export default function CandidateTestPage() {
                     else if (g.title.includes('Strategic')) newDescription = "Play role acting as assistant of business head to support business growth through data analysis, reporting, and strategic insights, while gaining hands-on exposure to end-to-end business operations in a dynamic FMCG environment.";
                     else if (g.title.includes('Logistics')) newDescription = "As a Logistics Management Trainee, you will be directly involved in core logistics operations, ranging from central warehouse management to transportation coordination and product distribution across the entire supply chain. Through rotations and hands-on exposure to different logistics functions, you will gradually build a solid understanding of how supply chain operations are managed and optimized in a fast-paced FMCG environment. Beyond daily operations, you will also have the opportunity to work on data analysis, process improvement, and cost optimization initiatives, enabling you to develop a strong systems-thinking mindset in supply chain management.";
 
+                    let icon = '📋';
+                    if (g.title.includes('Finance') || g.title.includes('BPM')) icon = '📊';
+                    else if (g.title.includes('Strategic')) icon = '📈';
+                    else if (g.title.includes('Logistics')) icon = '🚚';
+
                     return {
                         ...g,
                         description: newDescription,
                         durationMinutes: g.duration_minutes,
                         iconClass: 'group-icon-marketing',
+                        icon,
                         questions: merged,
                     };
                 });
@@ -202,12 +208,12 @@ export default function CandidateTestPage() {
                         </div>
                         <div className={styles["test-info-grid"]}>
                             <div className={styles["test-info-item"]}>
-                                <div className={styles["test-info-value"]}>{`${testGroups.length} tracks`}</div>
-                                <div className={styles["test-info-label"]}>{testGroups.map(g => g.title).join(" · ")}</div>
+                                <div className={styles["test-info-value"]}>📊 Track Structure</div>
+                                <div className={styles["test-info-label"]}>{testGroups.map(g => g.title).join(" / ")}</div>
                             </div>
                             <div className={styles["test-info-item"]}>
-                                <div className={styles["test-info-value"]}>30 mins</div>
-                                <div className={styles["test-info-label"]}>per track • 15 questions</div>
+                                <div className={styles["test-info-value"]}>⏱️ Test Format</div>
+                                <div className={styles["test-info-label"]}>30 minutes / track<br />15 questions</div>
                             </div>
                         </div>
                         <form onSubmit={handleEntry} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-lg)" }}>
@@ -252,11 +258,6 @@ export default function CandidateTestPage() {
                             <div key={g.id} className={`card ${styles["group-card"]} ${selectedGroup?.id === g.id ? styles["group-card-selected"] : ""}`} onClick={() => setSelectedGroup(g)}>
                                 <div className={`${styles["group-card-icon"]} ${styles[g.iconClass]}`}>{g.icon}</div>
                                 <h3>{g.title}</h3>
-                                <p>{g.description}</p>
-                                <div className={styles["group-card-meta"]}>
-                                    <span><NotePencil size={16} style={{ verticalAlign: 'middle', marginRight: 2 }} />{g.questions.length} questions</span>
-                                    <span><Timer size={16} style={{ verticalAlign: 'middle', marginRight: 2 }} />{g.durationMinutes} mins</span>
-                                </div>
                             </div>
                         ))}
                     </div>
@@ -281,6 +282,8 @@ export default function CandidateTestPage() {
             <nav className={styles["test-nav"]}>
                 <div className="container">
                     <Link href="/" className={styles["test-logo"]}>
+                        <img src="/wilmar.png" alt="Wilmar CLV" style={{ height: 48, width: "auto" }} />
+                        <span style={{ width: 1, height: 24, background: "var(--color-border)", margin: "0 0.4rem" }} />
                         <img src="/wfl-logo.png" alt="W-Future Leader" style={{ height: 36, width: "auto" }} />
                     </Link>
                     <div className={styles["timer-container"]}>
@@ -393,6 +396,8 @@ function Nav() {
         <nav className={styles["test-nav"]}>
             <div className="container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Link href="/" className={styles["test-logo"]}>
+                    <img src="/wilmar.png" alt="Wilmar CLV" style={{ height: 56, width: "auto" }} />
+                    <span style={{ width: 1, height: 28, background: "var(--color-border)", margin: "0 0.5rem" }} />
                     <img src="/wfl-logo.png" alt="W-Future Leader" style={{ height: 40, width: "auto" }} />
                 </Link>
             </div>

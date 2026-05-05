@@ -20,11 +20,23 @@
 .logo {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
 }
 
 .logoImg {
   height: 48px;
   width: auto;
+}
+
+.logoImgWilmar {
+  height: 64px;
+  width: auto;
+}
+
+.logoDivider {
+  width: 1px;
+  height: 32px;
+  background-color: var(--color-border);
 }
 
 .navRight {
@@ -256,16 +268,147 @@
 }
 
 /* --- Responsive --- */
-@media (max-width: 768px) {
+
+/* Tablet */
+@media (max-width: 1024px) {
   .hero {
-    padding: 3rem var(--space-md) 4rem;
+    padding: 4rem var(--space-lg) 5rem;
   }
 
-  .heroActions {
-    flex-direction: column;
+  .heroContent {
+    max-width: 600px;
+  }
+
+  .infoContent {
+    max-width: 90%;
+    font-size: 1rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .nav {
+    padding: 0.5rem 0;
+  }
+
+  .logoImg {
+    height: 36px;
   }
 
   .navLabel {
     display: none;
+  }
+
+  .hero {
+    padding: 3rem var(--space-md) 3.5rem;
+    min-height: auto !important;
+    background-position: center center;
+  }
+
+  .heroContent {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .heroTitleMain {
+    font-size: 2.5rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .heroTitleSub {
+    font-size: 1.25rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .heroSlogan {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .heroActions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .applyBtn {
+    padding: 0.875rem 2rem;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .applyText {
+    font-size: 1.1rem;
+  }
+
+  .applyDate {
+    font-size: 0.8rem;
+  }
+
+  /* Info Section Mobile */
+  .infoSection {
+    padding: 2.5rem 1rem;
+  }
+
+  .infoTitle {
+    font-size: 1.5rem;
+  }
+
+  .infoContent {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .infoContent p {
+    margin-bottom: 1rem;
+  }
+
+  /* Footer Mobile */
+  .footer {
+    padding: var(--space-md) 0;
+    font-size: 0.7rem;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .hero {
+    padding: 2.5rem var(--space-sm) 3rem;
+  }
+
+  .heroTitleMain {
+    font-size: 2rem;
+  }
+
+  .heroTitleSub {
+    font-size: 1.1rem;
+  }
+
+  .heroSlogan {
+    font-size: 1.65rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .applyBtn {
+    max-width: 260px;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .applyText {
+    font-size: 1rem;
+  }
+
+  .infoSection {
+    padding: 2rem 0.75rem;
+  }
+
+  .infoTitle {
+    font-size: 1.3rem;
+  }
+
+  .infoContent {
+    font-size: 0.9rem;
+    line-height: 1.65;
   }
 }
