@@ -75,9 +75,9 @@ export default function CandidateTestPage() {
                     const merged = [...commonQuestions, ...groupSpecific].sort((a: any, b: any) => a.sort_order - b.sort_order);
                     
                     let newDescription = g.description;
-                    if (g.title.includes('Finance') || g.title.includes('BPM')) newDescription = "Finance, budget management, cash flow, financial reporting";
-                    else if (g.title.includes('Strategic')) newDescription = "Strategic planning, market analysis, KPIs & sustainable growth";
-                    else if (g.title.includes('Logistics')) newDescription = "Supply chain management, warehousing, transport & inventory optimization";
+                    if (g.title.includes('Finance') || g.title.includes('BPM')) newDescription = "You will undergo structured rotations across Finance and Business Process Management (BPM), gain hands-on experience in financial operations, reporting, and process improvement within a dynamic FMCG environment.";
+                    else if (g.title.includes('Strategic')) newDescription = "Play role acting as assistant of business head to support business growth through data analysis, reporting, and strategic insights, while gaining hands-on exposure to end-to-end business operations in a dynamic FMCG environment.";
+                    else if (g.title.includes('Logistics')) newDescription = "As a Logistics Management Trainee, you will be directly involved in core logistics operations, ranging from central warehouse management to transportation coordination and product distribution across the entire supply chain. Through rotations and hands-on exposure to different logistics functions, you will gradually build a solid understanding of how supply chain operations are managed and optimized in a fast-paced FMCG environment. Beyond daily operations, you will also have the opportunity to work on data analysis, process improvement, and cost optimization initiatives, enabling you to develop a strong systems-thinking mindset in supply chain management.";
 
                     return {
                         ...g,
@@ -197,8 +197,11 @@ export default function CandidateTestPage() {
                 <div className={styles["test-entry"]}>
                     <div className={`card ${styles["test-entry-card"]}`}>
                         <div className={styles["test-entry-header"]}>
-                            <h1>W-Future Leader</h1>
-                            <p>Management Trainee 2026 — Aptitude Test</p>
+                            <h1>W-Future Leader 2026</h1>
+                            <p style={{ fontWeight: 600, marginTop: '8px', marginBottom: '16px' }}>Backoffice Trainee Program — Aptitude Test</p>
+                            <p style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--color-text-secondary)', textAlign: 'justify' }}>
+                                The W-Future Leader 2026 – Backoffice Trainee Program is designed to identify and develop the next generation of leaders in key strategic functions at Wilmar CLV, including Finance and Supply Chain Management (SCM). Over a structured 24-month journey, the program offers comprehensive development experience through intensive training, job rotations, and hands-on involvement in real business projects. Participants will have the opportunity to work alongside experienced professionals, gain deep insights into FMCG business operations, and develop strong strategic thinking and leadership capabilities in a dynamic, regional-scale environment. More than just a training program, W-Future Leader serves as a launchpad for high-potential talents to accelerate their growth, make a meaningful impact, and prepare for key roles within Wilmar CLV.
+                            </p>
                         </div>
                         <div className={styles["test-info-grid"]}>
                             <div className={styles["test-info-item"]}>
