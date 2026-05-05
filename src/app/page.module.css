@@ -57,7 +57,7 @@
 /* --- Hero --- */
 .hero {
   position: relative;
-  background-image: url('/TL-1-scaled.png');
+  background-image: url('/TL-1-scaled.svg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
