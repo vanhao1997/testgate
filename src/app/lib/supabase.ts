@@ -60,7 +60,7 @@ export async function sendToGoogleSheet(data: {
         await fetch(GOOGLE_SHEET_WEBHOOK, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload),
         });
     } catch (e) {
