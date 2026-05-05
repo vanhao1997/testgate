@@ -198,10 +198,7 @@ export default function CandidateTestPage() {
                     <div className={`card ${styles["test-entry-card"]}`}>
                         <div className={styles["test-entry-header"]}>
                             <h1>W-Future Leader 2026</h1>
-                            <p style={{ fontWeight: 600, marginTop: '8px', marginBottom: '16px' }}>Backoffice Trainee Program — Aptitude Test</p>
-                            <p style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--color-text-secondary)', textAlign: 'justify' }}>
-                                The W-Future Leader 2026 – Backoffice Trainee Program is designed to identify and develop the next generation of leaders in key strategic functions at Wilmar CLV, including Finance and Supply Chain Management (SCM). Over a structured 24-month journey, the program offers comprehensive development experience through intensive training, job rotations, and hands-on involvement in real business projects. Participants will have the opportunity to work alongside experienced professionals, gain deep insights into FMCG business operations, and develop strong strategic thinking and leadership capabilities in a dynamic, regional-scale environment. More than just a training program, W-Future Leader serves as a launchpad for high-potential talents to accelerate their growth, make a meaningful impact, and prepare for key roles within Wilmar CLV.
-                            </p>
+                            <p>Backoffice Trainee Program - Aptitude Test</p>
                         </div>
                         <div className={styles["test-info-grid"]}>
                             <div className={styles["test-info-item"]}>
